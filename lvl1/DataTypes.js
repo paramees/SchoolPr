@@ -1,4 +1,4 @@
-
+//object constructor
 function Product(ID, name, description, price, brand, activeSize, quantity, images) {
     this.ID = ID;
     this.name = name;
@@ -10,8 +10,7 @@ function Product(ID, name, description, price, brand, activeSize, quantity, imag
     this.quantity = quantity;
     this.date = Date.now();
     this.reviews = [];
-    this.images = [];
-    this.images.concat(images);
+    this.images = [].concat(images);
     
 
 
@@ -59,6 +58,9 @@ function Product(ID, name, description, price, brand, activeSize, quantity, imag
     this.getImages = function () {return this.images}
     this.setImages = function (images) {this.images = images}
 
+
+    //functions
+
     this.getReviewByID = function (ID) {
         this.reviews.forEach((value) => {if(value.ID === ID) return value})
     }
@@ -89,13 +91,14 @@ function Product(ID, name, description, price, brand, activeSize, quantity, imag
 
     this.getAverageRating = function () {
         let rating = [];
-        let sum;
-        this.reviews.forEach((elem) => {rating.push(elem.rating.values())});
-        rating.forEach((elem) => num+=elem);
-        return sum/rating.length
+        let sum = 0;
+        this.reviews.forEach((elem) => {for (let value of elem.rating.values()) {rating.push(value)}});
+        rating.forEach((elem) => sum+=elem);
+        return sum/rating.length;
     }
 }
 
+//consrtuctor reviews
 function Review(ID, author, comment, service, price, value, quality) {
     this.ID = ID;
     this.author = author;
@@ -109,8 +112,36 @@ function Review(ID, author, comment, service, price, value, quality) {
     ]);
 }
 
-let car = new Product(1, "car");
-let coockies = new Product(2, "coockies");
-console.log(car.getID());
-car.setID(5);
-console.log(car.getID());
+//search by substring in name or description
+function searchProducts(products, search) {
+    let result = [];
+    products.forEach((elem) => {if (elem.getName().includes(search) || elem.getDescription().includes(search)) result.push(elem)});
+    return result;
+}
+
+//sort ba name, id or price
+function sortProducts(products, sortRule) {
+    switch (sortRule.toLowerCase()) {
+        case "id":
+            return products.sort((a, b) => a.getID() > b.getID() ? 1 : -1);
+            break;
+        case "price":
+            return products.sort((a, b) => a.getPrice() > b.getPrice() ? 1 : -1);
+            break;
+        case "name":
+            return products.sort((a, b) => a.getName().localeCompare(b.getName()));
+        default:
+            console.log("Wrong sort rule")
+            return -1;
+    }
+
+}//tests
+let tshirt = new Product(1, "tshirt", "cool tshirt", 10, "adidas", "M", 100, ["pic1", "pic2"]);
+let boots = new Product(2, "boots", "winter boots", 50, "adidas", "L", 30, "pic1");
+console.log(tshirt.getImages());
+console.log(boots.getImages());
+tshirt.addReview(1, "me", "nice tshirt", 4,3,4,4);
+tshirt.addReview(2, "me", "nice cool tshirt", 5,5,4,4);
+console.log(tshirt.getAverageRating());
+let products = [tshirt, boots];
+
