@@ -9,6 +9,10 @@ function Validator() {
         let regExp = /^[\s\-]*(\+38)?[\s\-]*\(?(\d[\s\-]*){3,3}\)?[\s\-]*(\d[\s\-]*){7,7}$/;
         return regExp.test(phoneNum);
     }
+    this.validatePassword = function(password) {
+        let regExp = /^(?=.*[A-Z])(?=.*[\d])[\w]{8,}$/i;
+        return regExp.test(password);
+    }
 }
 
 let valid = new Validator();
@@ -24,7 +28,8 @@ console.log("firs_tpart@.se.en  \nResult: " + valid.validateEmail("firs_tpart@.s
 console.log("firstpart@.se.enddeded  \nResult: " + valid.validateEmail("firstpart@.se.enddeded"));
 */
 
-let test = ["+38 (099) 567 8901",
+/*
+let testPhone = ["+38 (099) 567 8901",
  "+38 099 5 6 7 8 9  01", 
 "(09-9) 567-890-1",
 " --  (099) 567 890-1",
@@ -32,6 +37,15 @@ let test = ["+38 (099) 567 8901",
 "+38 099 a0000000",
 "+38 (0989) 567 8901",
 "+48 (0989) 567 8901"]
-for (let i = 0; i < test.length; i++) {
-console.log(test[i] + "\nResult: " + valid.validatePhone(test[i]));
+for (let i = 0; i < testPhone.length; i++) {
+console.log(testPhone[i] + "\nResult: " + valid.validatePhone(testPhone[i]));
 }
+*/
+
+let testPassword = ["C00l_Pass",
+ "SupperPas1", 
+"Cool_pass",
+"C00l"]
+for (let i = 0; i < testPassword.length; i++) {
+    console.log(testPassword[i] + "\nResult: " + valid.validatePassword(testPassword[i]));
+    }
