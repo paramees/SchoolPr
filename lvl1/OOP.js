@@ -1,92 +1,96 @@
 class AbstractProduct {
-    constructor (ID, name, description, price, brand, quantity, images) {
-        this.ID = ID;
+    constructor (id, name, description, price, brand, quantity, images) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.brand = brand;
         this.quantity = quantity;
-        this.date = Date.now();
+        this.date = new Date();
         this.reviews = [];
         this.images = [].concat(images);
     }
 
         //getter and setter for ID
-    getID = function () {return this.ID}
-    setID = function (id) {this.ID = id}
+    getID () {return this.ID}
+    setID (id) {this.ID = id}
 
     //getter and setter for name
-    getName = function () {return this.name}
-    setName = function (name) {this.name = name}
+    getName () {return this.name}
+    setName (name) {this.name = name}
 
     //getter and setter for description
-    getDescription = function () {return this.description}
-    setDescription = function (description) {this.description = description}
+    getDescription () {return this.description}
+    setDescription (description) {this.description = description}
 
     //getter and setter for price
-    getPrice = function () {return this.price}
-    setPrice = function (price) {this.price = price}
+    getPrice () {return this.price}
+    setPrice (price) {this.price = price}
 
     //getter and setter for brand
-    getBrand = function () {return this.brand}
-    setBrand = function (brand) {this.brand = brand}
+    getBrand () {return this.brand}
+    setBrand (brand) {this.brand = brand}
 
     //getter and setter for quantity
-    getQuantity = function () {return this.quantity}
-    setQuantity = function (quantity) {this.quantity = quantity}
+    getQuantity () {return this.quantity}
+    setQuantity (quantity) {this.quantity = quantity}
 
     //getter and setter for date
-    getDate = function () {return this.date}
-    setDate = function (date) {this.date = date}
+    getDate () {return this.date}
+    setDate (date) {this.date = date}
 
     //getter and setter for reviews
-    getReviews = function () {return this.reviews}
-    setReviews = function (reviews) {this.reviews = reviews}
+    getReviews () {return this.reviews}
+    setReviews (reviews) {this.reviews = reviews}
 
     //getter and setter for images
-    getImages = function () {return this.images}
-    setImages = function (images) {this.images = images}
+    getImages () {return this.images}
+    setImages (images) {this.images = images}
 
     //universal getter-setter
-    getterSetter = function (property, value) {
-        if (this)
-        if (value === undefined) {
-            
+    getterSetter (property, value) {
+        if (this.hasOwnProperty(property)) {
+            if (value === undefined) {
+                return this[property]
+            } else {
+                this[property] = value;
+            }
         }
+        
     }
 
 
     //functions
 
-    getReviewByID = function (ID) {
+    getReviewByID (ID) {
         this.reviews.forEach((value) => {if(value.ID === ID) return value})
     }
 
-    getImage = function (param) {
+    getImage (param) {
         this.images.forEach((value) => {if(value === param) return value})
     }
 
-    addSize = function (size) {
+    addSize (size) {
         if (!this.sizes.includes(size)) {
             this.sizes.push(size);
         }
     }
 
-    deleteSize = function (param) {
+    deleteSize (param) {
         if (this.sizes.includes(size)) {
             this.sizes.slice(this.sizes.indexOf(size), 1);
         }
     }
 
-    addReview = function (ID, author, comment, service, price, value, quality) {
+    addReview (ID, author, comment, service, price, value, quality) {
         this.reviews.push(new Review(ID, author, comment, service, price, value, quality))
     }
 
-    deleteReview = function (ID) {
+    deleteReview (ID) {
         this.reviews.forEach((value) => {if(value.ID === ID) this.reviews.slice(this.reviews.indexOf(value), 1)})
     }
 
-    getAverageRating = function () {
+    getAverageRating () {
         let rating = [];
         let sum = 0;
         this.reviews.forEach((elem) => {for (let value of elem.rating.values()) {rating.push(value)}});
@@ -94,12 +98,16 @@ class AbstractProduct {
         return sum/rating.length;
     }
 
-    getFullInformation = function() {
-
+    getFullInformation () {
+        let result = "";
+        for (let prop in this) {
+            result += `${prop} - ${this[prop]}\n`
+        }
+        return result
     }
 
-    getPriceForQuantity = function(num) {
-
+    getPriceForQuantity (num) {
+        return "$" + num*this.price
     }
 
 }
@@ -143,8 +151,7 @@ function sortProducts(products, sortRule) {
 
 }
 
-Object.setPrototypeOf(Clothes, AbstractProduct);
-class Clothes {
+class Clothes extends AbstractProduct {
     constructor (ID, name, description, price, brand, quantity, images, material, color) {
         super(ID, name, description, price, brand, quantity, images);
         this.material = material;
@@ -152,20 +159,15 @@ class Clothes {
     }
 
     //getter and setter for material
-    getMaterial = function () {return this.material}
-    setMaterial = function (material) {this.material = material}
+    getMaterial () {return this.material}
+    setMaterial (material) {this.material = material}
 
     //getter and setter for color
-    getColor = function () {return this.color}
-    setColor = function (color) {this.color = color}
-
-    test = function () {
-        return this["color"]
-    }
+    getColor () {return this.color}
+    setColor (color) {this.color = color}
 }
 
-class Electronics {
-    __proto__ = AbstractProduct;
+class Electronics extends AbstractProduct {
     constructor (ID, name, description, price, brand, quantity, images, warranty, power) {
         super(ID, name, description, price, brand, quantity, images);
         this.warranty = warranty;
@@ -173,5 +175,10 @@ class Electronics {
     }
 }
 
-let tshirt = new Clothes(1,"tshirt", "cool tshirt", 10, "adidas", 100, ["pic1", "pic2"], "cotton","black");
-tshirt.test()
+let tshirt = new Clothes (1, "tshirt", "cool tshirt", 10, "adidas", 100, ["pic1", "pic2"], "cotton", "black");
+let pants = new Clothes (2, "pants", "nice pants", 25, "nike", 30, ["pic1", "pic2"], "silk", "blue");
+let boots = new Clothes (3, "boots", "winter boots", 70, "WinBoo", 20, ["pic1", "pic2"], "lether", "black");
+let products = [tshirt, pants, boots];
+console.log(tshirt);
+console.log(tshirt.getterSetter('id'));
+console.log(tshirt);
