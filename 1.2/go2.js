@@ -28,9 +28,10 @@ function parseTcpStringAsHttpRequest(string) {
     allAndBody = string.trim().split("\n\n")
     splitedStr = allAndBody[0].trim().split("\n")
     methodAndUri = splitedStr[0].split(" ")
-    head = {}
+    head = new Map()
     for (let i = 1; i < splitedStr.length; i++) {
         str = splitedStr[i].split(": ")
+        if(str[0] == "HOST") str[0] = "Host"
         head[str[0]] = str[1]
     }
   return { 
