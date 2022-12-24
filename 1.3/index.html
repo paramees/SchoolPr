@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Square</title>
+<style>
+    .square {
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        margin: 10px;
+    }
+    button {
+        margin: 15px;
+    }
+    .hidden {
+        display: none;
+    }
+    #yellowSquare {
+        width: 100px;
+        height: 100px;
+        background-color: yellow;
+        margin: 10px;
+    }
+    #redSquare {
+        width: 50px;
+        height: 50px;
+        background-color: red;
+        margin: 10px;
+        display: none;
+    }
+    #greenRect {
+        width: 50px;
+        height: 20px;
+        background-color: green;
+        margin: 10px;
+        display: none;
+        
+    }
+</style>
+</head>
+<body>
+    <div class = "square"></div>
+    <div class = "square"></div>
+    <div class = "square"></div>
+    <div class = "square"></div>
+    <div class = "square"></div>
+    <button type="button" title="Hide square" onclick="hideSquare()">Hide</button>
+    <button type="button" title="Delete square" onclick="deleteSquare()">Delete</button>
+    <button id = "button" type="button" title="Make invisible" onclick="makeInvisibleSquare()">Invisible</button>
+    <input type="text" id = "selector" title="CSS selector" onfocus="greenFuncUnhide()" oninput="greenFuncHide()">
+    <div id = "yellowSquare"></div>
+    <div id = "redSquare"></div>
+    <div id = "greenRect"></div>
+    <script>
+        document.getElementById("yellowSquare").addEventListener("click", yellowFunc)
+        document.getElementById("button").addEventListener("mouseover", redFuncUnhide)
+        document.getElementById("button").addEventListener("mouseout", redFuncHide)
+
+        function hideSquare() {
+            document.getElementsByClassName("square")[0].style.display = "none"
+        }
+        
+        function deleteSquare() {
+            const item = document.getElementsByClassName("square")[0]
+            const parent = item.parentNode
+            parent.removeChild(item)
+        }
+
+        function makeInvisibleSquare() {
+            const selector = document.getElementById("selector").value
+            if (selector) {
+            const items = document.querySelectorAll(selector);
+            for (let index = 0; index < items.length; index++) {
+            if (items[index].className.includes("hidden")) {
+                items[index].className = items[index].className.replace(" hidden", "");
+            } else {
+                items[index].className += " hidden";
+            }
+        }}}
+        
+        function yellowFunc() {
+            const item = document.getElementById("yellowSquare")
+            alert("Привет!")
+            item.removeEventListener("click", yellowFunc)
+            item.addEventListener("click", () => item.style.display = "none")
+        }
+
+        function redFuncUnhide() {
+            document.getElementById("redSquare").style.display = "block";
+        }
+
+        function redFuncHide() {
+            document.getElementById("redSquare").style.display = "none";
+        }
+
+        function greenFuncHide() {
+            document.getElementById("greenRect").style.display = "none";
+        }
+
+        function greenFuncUnhide() {
+            document.getElementById("greenRect").style.display = "block";
+        }
+    </script>
+</body>
+</html>
