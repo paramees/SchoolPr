@@ -37,9 +37,19 @@
         display: none;
         
     }
+    #left {
+        position: left;
+        float: left;
+        width: 70%;    }
+    #right {
+        float: right;
+        position: right;
+        width: 30%;
+    }
 </style>
 </head>
 <body>
+    <div id = "left">
     <div class = "square"></div>
     <div class = "square"></div>
     <div class = "square"></div>
@@ -52,10 +62,24 @@
     <div id = "yellowSquare"></div>
     <div id = "redSquare"></div>
     <div id = "greenRect"></div>
+    <textarea id = "imgLink" title="image link"></textarea>
+    <button type="button" title="add image" onclick="addImage()">Add image</button>
+    </div>
+    <div id = "right">
+        <output id = "coordMouse"></output>
+        <br>
+        <output id = "language"></output>
+        <br>
+        <output id = "location"></output>
+    </div>
+
     <script>
         document.getElementById("yellowSquare").addEventListener("click", yellowFunc)
         document.getElementById("button").addEventListener("mouseover", redFuncUnhide)
         document.getElementById("button").addEventListener("mouseout", redFuncHide)
+        document.body.addEventListener("mousemove", mouseCoords)
+        document.getElementById("language").value = window.navigator.language
+        navigator.geolocation.getCurrentPosition(showPosition)
 
         function hideSquare() {
             document.getElementsByClassName("square")[0].style.display = "none"
@@ -100,6 +124,23 @@
 
         function greenFuncUnhide() {
             document.getElementById("greenRect").style.display = "block";
+        }
+
+        function addImage() {
+            const img = document.createElement("img")
+            const arrLinks = document.getElementById("imgLink").value.split("\n")
+            for (let i = 0; i < arrLinks.length; i++) {
+                img.src = arrLinks[i]
+                document.body.appendChild(img)
+            }
+        }
+
+        function mouseCoords(e) {
+            document.getElementById("coordMouse").value = `X: ${e.pageX} Y: ${e.pageY}`
+        }
+
+        function showPosition(position) {
+            document.getElementById("location").value = `Ш: ${position.coords.latitude} Д: ${position.coords.longitude}`
         }
     </script>
 </body>
