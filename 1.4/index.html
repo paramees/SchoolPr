@@ -46,6 +46,11 @@
         position: right;
         width: 30%;
     }
+    #up {
+        top: 10px;
+        right: 10px;
+        position: fixed;
+    }
 </style>
 </head>
 <body>
@@ -63,7 +68,14 @@
     <div id = "redSquare"></div>
     <div id = "greenRect"></div>
     <textarea id = "imgLink" title="image link"></textarea>
-    <button type="button" title="add image" onclick="addImage()">Add image</button>
+    <button type="button" title="add image" onclick="addImage()">Add image</button><br>
+    <textarea id = "saveText1" title="Text saves"></textarea>
+    <textarea id = "saveText2" title="Text saves"></textarea>
+    <textarea id = "saveText3" title="Text saves"></textarea>
+    <button type="button" title="Save Text" onclick="saveText()">Save text</button>
+    
+    <button id="up" type="button" title="Save Text" onclick="goUp()" hidden>Go up</button> 
+
     </div>
     <div id = "right">
         <output id = "coordMouse"></output>
@@ -142,6 +154,36 @@
         function showPosition(position) {
             document.getElementById("location").value = `Ш: ${position.coords.latitude} Д: ${position.coords.longitude}`
         }
+
+        //Create local storage
+        let myStorage = window.localStorage
+
+        function saveText() {
+            myStorage.setItem("saveText1", document.getElementById("saveText1").value);
+            let date = new Date();
+            document.cookie = "saveText2=" + document.getElementById("saveText2").value
+            alert(document.cookie); 
+            sessionStorage.setItem("saveText3", document.getElementById("saveText3").value)
+        }
+
+        window.onload = function () {
+            document.getElementById("saveText1").value = myStorage.getItem("saveText1");
+            let cookie = document.cookie;
+            document.getElementById("saveText2").value = cookie.split("=")[1]
+            document.getElementById("saveText3").value = sessionStorage.getItem("saveText3");
+        }
+
+        function goUp () {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        window.addEventListener('scroll', function() {
+        up.hidden = (pageYOffset + document.documentElement.clientHeight) != document.documentElement.scrollHeight
+        });
     </script>
 </body>
 </html>
