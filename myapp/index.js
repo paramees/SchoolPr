@@ -4,8 +4,7 @@ const port = 3000;
 let counter = 0;
 
 app.get('/', (req, res) => {
-  res.send(counter.toString());
-  counter++;
+  res.sendFile(__dirname + "/index.html")
 })
 
 app.listen(port, () => {

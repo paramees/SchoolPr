@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Square</title>
+<title>BACK JS</title>
 <style>
     .square {
         width: 100px;
@@ -51,6 +51,37 @@
         right: 10px;
         position: fixed;
     }
+    #big {
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+    #small {
+        width: 50%;
+        height: 50%;
+        padding: 5px;
+        background-color: red;
+    }
+    #graySquare {
+        
+        width: 100%;
+        height: 100%;
+        background-color: gray;
+        opacity: 0.5;
+        position: absolute;
+        display: none;
+    }
+    #fileInput {
+        opacity: 0;
+        width: 200px;
+        height: 100px;
+    }
+    #fileDiv {
+        width: 200px;
+        height: 100px;
+        background-color: aqua;
+        text-align: center;
+    }
 </style>
 </head>
 <body>
@@ -76,6 +107,20 @@
     
     <button id="up" type="button" title="Save Text" onclick="goUp()" hidden>Go up</button> 
 
+    <div id="big">
+        <div id="small"></div>
+    </div>
+
+    <button type="button" title="Grey square" onclick="showGraySquare()">Block scroll</button>
+    <div id="graySquare"> </div>
+
+    <form><input id="go" type="submit" value="GO"></form>
+
+    <div id="fileDiv">
+        <p id="fileText">Drag & Drop</p>    
+        <form><input id="fileInput" type="file"></form>
+    </div>
+
     </div>
     <div id = "right">
         <output id = "coordMouse"></output>
@@ -89,8 +134,18 @@
         document.getElementById("yellowSquare").addEventListener("click", yellowFunc)
         document.getElementById("button").addEventListener("mouseover", redFuncUnhide)
         document.getElementById("button").addEventListener("mouseout", redFuncHide)
+        document.getElementById("big").addEventListener("click", function () {alert("blue")}) 
+        document.getElementById("small").addEventListener("click", function () {alert("red")
+                                                                            event.stopPropagation()}); //big div does not call alert
+        document.getElementById("graySquare").addEventListener("click", hideGraySquare);
+        document.getElementById("go").addEventListener("click", function (e) {e.preventDefault()})
+        document.getElementById("fileInput").addEventListener("change", inputFileDone)
+        document.getElementById("fileInput").addEventListener("dragenter", inputFileDrag)
+
         document.body.addEventListener("mousemove", mouseCoords)
+
         document.getElementById("language").value = window.navigator.language
+
         navigator.geolocation.getCurrentPosition(showPosition)
 
         function hideSquare() {
@@ -162,14 +217,13 @@
             myStorage.setItem("saveText1", document.getElementById("saveText1").value);
             let date = new Date();
             document.cookie = "saveText2=" + document.getElementById("saveText2").value
-            alert(document.cookie); 
             sessionStorage.setItem("saveText3", document.getElementById("saveText3").value)
         }
 
         window.onload = function () {
             document.getElementById("saveText1").value = myStorage.getItem("saveText1");
             let cookie = document.cookie;
-            document.getElementById("saveText2").value = cookie.split("=")[1]
+            document.getElementById("saveText2").value = cookie.split("=")[1] == undefined ? "" : cookie.split("=")[1]  
             document.getElementById("saveText3").value = sessionStorage.getItem("saveText3");
         }
 
@@ -184,6 +238,31 @@
         window.addEventListener('scroll', function() {
         up.hidden = (pageYOffset + document.documentElement.clientHeight) != document.documentElement.scrollHeight
         });
+
+        function showGraySquare () {
+            document.getElementById("graySquare").style.display = "block";
+            document.body.style.overflow = "hidden";
+            document.getElementById("graySquare").style.top = pageYOffset + "px";
+        }
+
+        function hideGraySquare () {
+            document.getElementById("graySquare").style.display = "none";
+            document.body.style.overflow = "";
+        }
+
+        function sendForm (e) {
+            e.preventDefault();
+        }
+
+        function inputFileDone () {
+            document.getElementById("fileDiv").style.backgroundColor = "red"
+            document.getElementById("fileText").value = "Got your file!"
+        }
+
+        function inputFileDrag () {
+            document.getElementById("fileDiv").style.backgroundColor = "blue"
+            document.getElementById("fileText").value = "Yep, here"
+        }
     </script>
 </body>
 </html>
