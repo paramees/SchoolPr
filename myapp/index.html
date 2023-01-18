@@ -81,6 +81,10 @@
         height: 100px;
         background-color: aqua;
         text-align: center;
+        justify-content: center;
+        border: 2px solid black;
+        border-radius: 17px;
+        cursor: pointer;
     }
 </style>
 </head>
@@ -255,13 +259,18 @@
         }
 
         function inputFileDone () {
+            if (document.getElementById("fileInput").value) {
             document.getElementById("fileDiv").style.backgroundColor = "red"
-            document.getElementById("fileText").value = "Got your file!"
+            document.getElementById("fileText").innerHTML = "Got your file!"
+            } else {
+                document.getElementById("fileDiv").style.backgroundColor = "aqua"
+            document.getElementById("fileText").innerHTML = "Drag & Drop"
+            }
         }
 
         function inputFileDrag () {
             document.getElementById("fileDiv").style.backgroundColor = "blue"
-            document.getElementById("fileText").value = "Yep, here"
+            document.getElementById("fileText").innerHTML = "Yep, here"
         }
     </script>
 </body>
