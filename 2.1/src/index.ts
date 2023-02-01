@@ -55,8 +55,12 @@ hey(b)
 // 4.3
 
 function hey(a: Pet) {
-    return "hey! i'm " + a.name()
-		 + (a.type === "cat" ? ("cuteness: "+a.cuteness) : ("coolness: "+a.coolness))
+    if (a.type) {
+        return "hey! i'm " + a.name()
+		     + (a.type === "cat" ? ("cuteness: "+a.cuteness) : ("coolness: "+a.coolness))
+    } else {
+        return "hey! i'm " + a.name()
+    }
 }
 hey({name: () => "roma", type: "cat", cuteness: 100})
 hey({name: () => "vasya", type: "dog", coolness: 100})
