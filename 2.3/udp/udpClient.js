@@ -21,6 +21,8 @@ client.on('message', (message, info) => {
     }
     const time = new Date().getTime() - start;
     console.log('Time process: ' + time + "ms");
+    console.log('Disconected');
+    client.close()
 });
 
 const packet = Buffer.from(myMassage);
