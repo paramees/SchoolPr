@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 
 const app = express();
 const PORT = 5001;
-const URI = "mongodb+srv://Sergey:Passw123@cluster0.4zcsikv.mongodb.net/Todo?retryWrites=true&w=majority";
+const URI = "mongodb+srv://Sergey:@cluster0.4zcsikv.mongodb.net/Todo?retryWrites=true&w=majority";
 let lastID = 1;
 
 let dbList: Collection<Document>; //data base with to do list
