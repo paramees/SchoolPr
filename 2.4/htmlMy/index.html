@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>To Do List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: rgba(196, 88, 17, 0.918);
+            text-align: center;
+            width: 100%;
+            padding: 15px;
+            color: #3a3a3a;
+        }
+
+        main {
+            margin: 5% 20%;
+            padding: 1%;
+            border: 3px solid rgba(196, 88, 17, 0.918);
+            border-radius: 7px;
+            background-color: #b4b4b4;
+        }
+
+        #inputTask {
+            width: 68%;
+        }
+
+        #btnAdd, #btnLogout {
+            width: 15%;
+        }
+
+        ul {
+            list-style: none inside;
+        }
+
+        li {
+            width: 97%;
+            cursor: pointer;
+        }
+
+        li::before {
+            content: "☐";
+        }
+
+        li.checked::before {
+            content: "☑";
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #loginInput,
+        #passwordInput {
+            margin: 3% 0%;
+            width: 100%;
+        }
+
+        #loginDiv {
+            margin: 3% 40%;
+        }
+
+        .authBtn {
+            margin: 5% 0%;
+            width: 48%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>My todo list</h1>
+    </header>
+    <main>
+
+        <!--------------------------------- Login/Register -------------------------->
+        <div id="loginDiv">
+            <label for="loginInput">Email:</label>
+            <input type="email" name="email" id="loginInput" autofocus placeholder="Email@abc.ua">
+            <label for="passwordInput">Password:</label>
+            <input type="password" name="password" id="passwordInput">
+            <input type="button" onclick="login()" class="authBtn" value="Login">
+            <input type="button" onclick="register(login)" class="authBtn" value="Register">
+        </div>
+        <!--------------------------------- Task List -------------------------->
+        <div id="taskListDiv" class="hidden">
+            <input type="text" name="inputTask" id="inputTask">
+            <input type="button" id="btnAdd" onclick="sendAndGetTasks()" value="Add task">
+            <input type="button" id="btnLogout" onclick="logout()" value="Logout">
+            <ul id="list">
+
+            </ul>
+        </div>
+    </main>
+    <script>
+        const URL_API = 'http://127.0.0.1:5001/api/v2/router?';
+        let list = document.getElementById("list");
+
+        function getItems() {
+            let nodes = document.querySelectorAll("LI");
+            for (let node of nodes) {
+                node.remove();
+            }
+
+            fetch(URL_API + new URLSearchParams({ action: "getItems" }), {
+                credentials: 'include',
+                method: 'POST'
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.items[0]) {
+                        response.items.forEach((item) => addTask(item));
+                    }
+                });
+        }
+
+        function sendAndGetTasks() {
+            let data = document.getElementById("inputTask").value;
+            if (data.trim() === "") {
+                alert("write task!");
+                return
+            }
+            fetch(URL_API + new URLSearchParams({ action: "createItem" }), {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: data })
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.id) {
+                        getItems();
+                    } else {
+                        alert(response.error);
+                    }
+                });
+        }
+
+        function addTask(item) {
+            let data = item.text;
+            let checked = item.checked;
+
+            let node = document.createElement('li');
+            node.innerHTML = data + " ";
+            node.id = item.id;
+            node.addEventListener("click", (ev) => checkTask(ev));
+
+            let input = document.createElement("input");
+            input.type = "text";
+            input.name = "edit task";
+            input.className = "hidden"
+            node.appendChild(input);
+
+            let btn = document.createElement("button");
+            btn.innerHTML = "✎️";
+            btn.id = "editBtn";
+            btn.onclick = (ev) => editMode(ev);
+            node.appendChild(btn);
+
+            btn = document.createElement("button");
+            btn.innerHTML = "💾";
+            btn.id = "saveBtn";
+            btn.onclick = (ev => { saveTask(ev) });
+            btn.className = "hidden";
+            node.appendChild(btn);
+
+            btn = document.createElement("button");
+            btn.innerHTML = "✕";
+            btn.id = "deleteBtn";
+            btn.onclick = (ev => { deleteBtn(ev) });
+            node.appendChild(btn);
+
+            if (checked) node.className += "checked";
+
+            list.appendChild(node);
+        }
+
+        function deleteBtn(ev) {
+            let id = ev.target.parentNode.id;
+            if (!ev.target.parentNode.childNodes[1].className.includes("hidden")) {
+                editMode(ev)
+            } else {
+            fetch(URL_API + new URLSearchParams({ action: "deleteItem" }), {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: Number(id) })
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.ok == true) {
+                        getItems();
+                    }
+                });
+            }
+        }
+
+        function checkTask(ev) {
+            if (ev.target.tagName === "LI") {
+                ev.target.classList.toggle("checked");
+                editTask({ id: Number(ev.target.id), text: ev.target.innerHTML.split("<input")[0], checked: ev.target.className.includes("checked") });
+            }
+        }
+
+        function editTask(obj) {
+            fetch(URL_API + new URLSearchParams({ action: "editItem" }), {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(obj)
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.ok == true) {
+                        getItems();
+                    }
+                });
+        }
+
+        function editMode(ev) {
+            let task = ev.target.parentNode;
+            task.childNodes[1].classList.toggle("hidden");
+            task.childNodes[2].classList.toggle("hidden");
+            task.childNodes[3].classList.toggle("hidden");
+        }
+
+        function saveTask(ev) {
+            let task = ev.target.parentNode;
+            let input = task.childNodes[1];
+
+            let text = input.value;
+            if (text !== "" && text) {
+                editTask({ id: Number(task.id), text: text, checked: task.className.includes("checked") });
+            }
+
+            input.classList.toggle("hidden");
+            task.childNodes[2].classList.toggle("hidden");
+            task.childNodes[3].classList.toggle("hidden");
+        }
+
+        function register(loginFunc) {
+            let login = document.getElementById("loginInput").value;
+            let pass = document.getElementById("passwordInput").value;
+            let params = JSON.stringify({ login: login, pass: pass });
+            fetch(URL_API + new URLSearchParams({ action: "register" }), {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: params
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.ok == true) {
+                        loginFunc();
+                    } else {
+                        alert(response.error);
+                    }
+                });
+        }
+
+        function login() {
+            let login = document.getElementById("loginInput").value;
+            let pass = document.getElementById("passwordInput").value;
+            let params = JSON.stringify({ login: login, pass: pass });
+            fetch(URL_API + new URLSearchParams({ action: "login" }), {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: params
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.ok == true) {
+                        document.getElementById("taskListDiv").classList.toggle("hidden");
+                        document.getElementById("loginDiv").classList.toggle("hidden");
+                        getItems();
+                    } else {
+                        alert(response.error);
+                    }
+                });
+        }
+
+        function logout() {
+            fetch(URL_API + new URLSearchParams({ action: "logout" }), {
+                credentials: 'include',
+                method: 'POST'
+            })
+                .then(res => res.json())
+                .then((response) => {
+                    if (response.ok) {
+                        for (let node of document.querySelectorAll("LI")) {
+                            node.remove();
+                        }
+                        document.getElementById("taskListDiv").classList.toggle("hidden");
+                    }
+                });
+        }
+
+        
+
+    </script>
+</body>
+
+</html>

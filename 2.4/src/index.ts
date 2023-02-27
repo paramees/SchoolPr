@@ -5,11 +5,11 @@ import { Collection, Document, MongoClient } from 'mongodb';
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const cors = require('cors');
 
 const app = express();
 const PORT = 5001;
 const URI = "mongodb+srv://Sergey:@cluster0.4zcsikv.mongodb.net/Todo?retryWrites=true&w=majority";
-let lastID = 1;
 
 let dbList: Collection<Document>; //data base with to do list
 
@@ -36,14 +36,19 @@ client.connect()
 
 
 //--------------app uses------------------------------
-app.use(express.static(__dirname.replace("dist", "html")));
+//app.use(express.static(__dirname.replace("dist", "html")));
+app.use(cors({
+  origin: 'http://127.0.0.1:8080',
+  credentials: true
+}));
 app.use(bodyParser.json())
 app.use(session({
-  store: new FileStore({}),
+  store: new FileStore({ttl: 100}),
   key: "user_session",
   secret: 'strong password',
   resave: false,
   saveUninitialized: false,
+  
   cookie: { maxAge: 100000 },
 }));
 //---------------------------------------------------
@@ -170,7 +175,8 @@ async function addItem (request : Request, response : Response) {
     let user = await dbList.findOne({ login: request.session.login })
     if (user) {
       if (user.items && user.items[0]) {
-        id = user.items.reduce((acc: { id: number }, curr: { id: number }) => acc.id > curr.id ? acc : curr);
+        let items : {id : number}[] = user.items;
+        id = items.reduce((acc, cur) => cur.id > acc ? cur.id : acc, 0) + 1;
       } else {
         id = 1;
       }

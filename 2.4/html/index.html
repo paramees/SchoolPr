@@ -225,7 +225,7 @@ README:
     <header class="header">
         <h1 class="logo">Ш<span style="color: #27ae60">++</span></h1>  
     </header>
-    <main>
+    <main><!--
         <div class="settings">
             <h3>Настройки приложения:</h2>
             <label>
@@ -245,7 +245,7 @@ README:
             <div>
                 <button @click="getTasks()" class="primary">Поехали</button>
             </div>
-        </div>
+        </div>-->
         <div class="wrapper login" v-if="step === 'login'">
             <h3>Доступ к учетной записи</h1>
             <div class="LoginInput">
@@ -328,8 +328,8 @@ README:
                 login: '',
                 pass: '',
                 backendLanguage: 'JS',
-                apiURL: 'http://localhost:5001/api/',
-                apiVersion: 'v1',
+                apiURL: 'http://127.0.0.1:5001/api/',
+                apiVersion: 'v2',
                 step: ''
             },
             computed: {
@@ -506,6 +506,7 @@ README:
                 },
             },
         });
+        vue.logout();
 </script>
 </body>
 </html>
