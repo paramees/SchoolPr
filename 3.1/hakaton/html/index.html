@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Plus Minus</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <main>
+        
+        <input type="button" id="plus" value="Plus: 0">
+        <button id="minus">Minus: 0</button>
+    </main>
+    <script>
+        var Buttons;
+        (function (Buttons) {
+            Buttons[document.getElementById("plus")] = "plus";
+            Buttons["plus"] = document.getElementById("plus");
+            Buttons[document.getElementById("minus")] = "minus";
+            Buttons["minus"] = document.getElementById("minus");
+        })(Buttons || (Buttons = {}));
+        console.log(Buttons)
+
+        Buttons.plus.addEventListener("click", (ev) => click(ev));
+        Buttons.minus.addEventListener("click", (ev) => click(ev));
+
+        function click(ev) {
+            plusValue = Buttons.plus.value.split(": ")[1];
+            minusValue = Buttons.minus.innerHTML.split(": ")[1];
+            
+            fetch("http://localhost:5000", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    btn : Buttons[ev.target],
+                    plus : Number(plusValue),
+                    minus: Number(minusValue)
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                Buttons.plus.value = Buttons.plus.value.replace(plusValue, res.plus);
+                Buttons.minus.innerHTML = Buttons.minus.innerHTML.replace(minusValue, res.minus);
+            })
+        }
+
+    </script>
+</body>
+
+</html>
