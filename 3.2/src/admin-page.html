@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)file:///home/andy/Desktop/books-page/shpp-library.html -->
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <style>
+        table {
+            border-spacing: 0 10px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: bold;
+        }
+
+        th {
+            padding: 10px 20px;
+            background: #56433D;
+            color: #F9C941;
+            border-right: 2px solid;
+            font-size: 0.9em;
+        }
+
+        th:first-child {
+            text-align: left;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            vertical-align: middle;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            border-top: 2px solid #56433D;
+            border-bottom: 2px solid #56433D;
+            border-right: 2px solid #56433D;
+        }
+
+        td:first-child {
+            border-left: 2px solid #56433D;
+            border-right: none;
+        }
+
+        td:nth-child(2) {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="logout" onclick="logout()">LOG OUT</button>
+    <table id = "table">
+        <tr>
+            <th colspan="2">Назва книги</th>
+            <th>Автори</th>
+            <th>Рік</th>
+            <th>Дія</th>
+            <th>Кліків</th>
+        </tr>
+    </table>
+
+    <ul id="pages" style="display: flex; list-style: none;"></ul>
+<br><br><br>
+    <form id="form">
+        <input name="name" type="text" placeholder="Book name" required><br >
+        <input name="year" type="number" placeholder="Year" required><br >
+        <input name="pages" type="number" placeholder="Pages" required><br >
+        Book img: <input type="file" name="img" accept="image/jpg"><br >
+        <input name="authors" type="text" placeholder="Authors separated by ," required><br >
+        <input name="description" type="text" placeholder="Description" required><br >
+    <input id="addBook" type="submit" value="Add book" />
+    </form>
+
+    <script>
+        const booksPerPage = 5;
+        let maxPages;
+
+        async function getData () {
+            let resp = await fetch("http://localhost:3000/getBooks", {mode: 'no-cors'});
+            let data = await resp.json();
+            return data
+        }
+
+        async function main () {
+            let data = await getData();
+            maxPages =  Math.ceil(data.length/booksPerPage);
+            displayPages(maxPages, data)
+            displayBooks(data.slice(0,booksPerPage));
+        }
+
+        function displayPages (pages, data) {
+            let ul = document.getElementById("pages");
+            for (let i = 0; i < pages; i++) {
+                let li = document.createElement("li");
+                li.innerHTML = "-" + (i + 1) + "-";
+                li.style = "margin-left: 20px; cursor: pointer;";
+                li.onclick = () => {
+                    displayBooks(data.slice(i * booksPerPage,(i + 1) * booksPerPage));
+                    document.querySelectorAll('li').forEach(el => {
+                        el.style.color = "";
+                    })
+                    li.style.color = "blue";
+                }
+                ul.appendChild(li)
+            }
+        }
+
+        function displayBooks (arrBooks) {
+            let table = document.getElementById("table");
+            let books = document.querySelectorAll(".book");
+            books.forEach(book => book.remove());
+            arrBooks.forEach(element => {
+                let book = document.createElement("tr");
+                book.className = "book";
+                let raw = document.createElement("td");
+                let img = document.createElement("img");
+                img.src = "http://localhost:3000/book/book-page_files/img/" + element.id + ".jpg";
+                img.width = "50";
+                raw.appendChild(img);
+                book.appendChild(raw);
+                raw = document.createElement("td");
+                raw.innerHTML = element.name;
+                book.appendChild(raw);
+                raw = document.createElement("td");
+                raw.innerHTML = element.author;
+                book.appendChild(raw);
+                raw = document.createElement("td");
+                raw.innerHTML = element.year;
+                book.appendChild(raw);
+                raw = document.createElement("td");
+                raw.style = "cursor: pointer;";
+                raw.onclick = () => {
+                    deleteBook(element.id)
+                };
+                raw.innerHTML = "delete";
+                book.appendChild(raw);
+                raw = document.createElement("td");
+                raw.innerHTML = element.wanted;
+                book.appendChild(raw);
+                table.appendChild(book);
+            });
+        }
+
+        function deleteBook(id) {
+            fetch('http://localhost:3000/admin/api/v1/delete', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({id: Number(id)})
+            }).then((res) => {
+                res.json().then((res) => {
+                    alert(res.data);
+                })
+            });
+        }
+
+        function addBook () {
+            let data = new FormData(document.getElementById("form"));
+            fetch('http://localhost:3000/admin/api/v1/add', {
+            method: 'POST',
+            body: data
+            }).then((res) => {
+                res.json().then((res) => {
+                    alert(res.data);
+                })
+            });
+        }
+
+        document.getElementById("form").addEventListener("submit", (ev) => {
+            ev.preventDefault();
+            addBook();
+        })
+
+        function logout() {
+            
+            fetch('http://localhost:3000/admin/api/v1', {
+                headers: new Headers({
+                        'Authorization': 'Basic '+btoa('username:password')
+                })
+            }).finally(() => location.reload())
+            
+        }
+
+        main();
+        
+    </script>
+</body>
