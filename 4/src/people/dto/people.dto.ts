@@ -16,4 +16,5 @@ export class PeopleDto {
 	created: string;
 	edited: string;
 	url: string;
+	image_names?: string;
 }

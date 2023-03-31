@@ -53,4 +53,7 @@ export class PeopleEntity {
 
     @Column()
 	url: string;
+
+    @Column({type: 'text'})
+	image_names: string;
 }

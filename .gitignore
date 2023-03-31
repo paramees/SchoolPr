@@ -2,6 +2,9 @@
 **/dist
 **/node_modules
 
+#images
+**/images
+
 # Logs
 logs
 *.log
