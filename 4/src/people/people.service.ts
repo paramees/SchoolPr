@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PeopleEntity } from './entity/people.entity';
+import fs, { createReadStream } from 'fs';
 
 @Injectable()
 export class PeopleService {
@@ -47,13 +48,25 @@ export class PeopleService {
     return await this.peopleRepository.save(people);
   }
 
-  async removePeopleImage (id: number, name: string): Promise<string | PeopleEntity> {
+  async removePeopleImage(id: number, name: string): Promise<string | PeopleEntity> {
     let people = await this.peopleRepository.findOneBy({ id });
     if (!people) {
       return "no people with id: " + id;
     }
     people.image_names = people.image_names.split(", ").filter(el => el !== name).join(", ");
+
+    fs.unlink(name, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+
     return await this.peopleRepository.save(people);
+  }
+
+  async getPeopleImage(name: string): Promise<fs.ReadStream> {
+    return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
   }
 
 }
