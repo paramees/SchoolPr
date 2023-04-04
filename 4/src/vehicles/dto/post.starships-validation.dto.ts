@@ -1,52 +1,67 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsArray, IsNotEmpty } from 'class-validator';
+import { IsString, IsArray, IsNotEmpty } from 'class-validator';
 
-export class PostPeopleDtoValidate {
+export class PostStarshipsDtoValidate {
 	
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
     name: string;
 
-	@IsNumber()
-	@ApiProperty()
+	@IsString()
 	@IsNotEmpty()
-	height: number;
-
-	@IsNumber()
 	@ApiProperty()
-	@IsNotEmpty()
-	mass: number;
+	starship_class: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	hair_color: string;
+	manufacturer: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	skin_color: string;
+	cost_in_credits: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	eye_color: string;
+	length: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	birth_year: string;
+	crew: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	gender: string;
+	passengers: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	homeworld: string;
+	max_atmosphering_speed: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty()
+	hyperdrive_rating: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty()
+	MGLT: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty()
+	cargo_capacity: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@ApiProperty()
+	consumables: string;
 
 	@IsArray()
 	@IsNotEmpty()
@@ -58,19 +73,7 @@ export class PostPeopleDtoValidate {
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	species: string[]; //urls
-
-	@IsArray()
-	@IsNotEmpty()
-	@IsString({ each: true })
-	@ApiProperty()
-	vehicles: string[]; //urls
-
-	@IsArray()
-	@IsNotEmpty()
-	@IsString({ each: true })
-	@ApiProperty()
-	starships: string[]; //urls
+	pilots: string[]; //urls
 
 	@IsString()
 	@IsNotEmpty()

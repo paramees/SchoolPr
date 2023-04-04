@@ -23,6 +23,7 @@ export class PeopleService {
   }
 
   async addPeople(people: Partial<PeopleEntity>): Promise<PeopleEntity> {
+    if (!people.image_names) people.image_names = [];
     return await this.peopleRepository.save(people);
   }
 
@@ -30,7 +31,7 @@ export class PeopleService {
     await this.peopleRepository.delete(id);
   }
 
-  async updatePeople(id: number, peopleUpd: PeopleEntity): Promise<PeopleEntity> | null {
+  async updatePeople(id: number, peopleUpd: Partial<PeopleEntity>): Promise<PeopleEntity> | null {
     let people = await this.peopleRepository.findOneBy({ id });
     if (!people) {
       return null;
@@ -44,7 +45,7 @@ export class PeopleService {
     if (!people) {
       return "no people with id: " + id;
     }
-    people.image_names = filenames.join(", ");
+    filenames.forEach(el => people.image_names.push(el))
     return await this.peopleRepository.save(people);
   }
 
@@ -53,7 +54,7 @@ export class PeopleService {
     if (!people) {
       return "no people with id: " + id;
     }
-    people.image_names = people.image_names.split(", ").filter(el => el !== name).join(", ");
+    people.image_names = people.image_names.filter(el => el !== name);
 
     fs.unlink(name, (err) => {
       if (err) {

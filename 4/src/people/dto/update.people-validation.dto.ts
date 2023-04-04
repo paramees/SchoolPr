@@ -57,25 +57,25 @@ export class UpdatePeopleDtoValidate {
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	films: string[] | string; //urls
+	films: string[]; //urls
 
 	@IsArray()
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	species: string[] | string; //urls
+	species: string[]; //urls
 
 	@IsArray()
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	vehicles: string[] | string; //urls
+	vehicles: string[]; //urls
 
 	@IsArray()
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	starships: string[] | string; //urls
+	starships: string[]; //urls
 
 	@IsString()
 	@IsNotEmpty()

@@ -9,12 +9,12 @@ export class PeopleDto {
 	birth_year: string;
 	gender: string;
 	homeworld: string;
-	films: string[] | string; //urls
-	species: string[] | string;
-	vehicles: string[] | string; //urls
-	starships: string[] | string; //urls
+	films: string[]; //urls
+	species: string[];
+	vehicles: string[]; //urls
+	starships: string[]; //urls
 	created: string;
 	edited: string;
 	url: string;
-	image_names?: string;
+	image_names?: string[];
 }

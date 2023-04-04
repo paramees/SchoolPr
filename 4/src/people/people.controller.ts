@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Header, Param, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { PeopleDto } from './dto/people.dto';
-import { PeopleService } from './people.service';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
-import { PostPeopleDtoValidate } from './dto/post.people-validation.dto';
-import { PeopleEntity } from './entity/people.entity';
-import { UpdatePeopleDtoValidate } from './dto/update.people-validation.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Request, Response } from 'express';
+
+import { PeopleDto } from './dto/people.dto';
+import { UpdatePeopleDtoValidate } from './dto/update.people-validation.dto';
+import { PostPeopleDtoValidate } from './dto/post.people-validation.dto';
+
+import { PeopleService } from './people.service';
+
 
 @ApiTags("PeopleApi-CRUD")
 @Controller('people')
@@ -17,19 +19,19 @@ export class PeopleController {
     @Get()
     @ApiResponse({ status: 200, description: 'Return 10 last people in data base.' })
     async getLastTenPeople(): Promise<PeopleDto[]> {
-        return transformStrToMass(await this.peopleService.getLastTenPeople())
+        return await this.peopleService.getLastTenPeople()
     }
 
     @Get("/:id")
     @ApiResponse({ status: 200, description: 'Return people by id in data base.' })
     async getOneById(@Param('id', ParseIntPipe) id: number): Promise<PeopleDto> {
-        return transformStrToMass([await this.peopleService.getPeopleById(id)])[0]
+        return await this.peopleService.getPeopleById(id)
     }
 
     @Post("add")
     @ApiResponse({ status: 201, description: 'Add one people in data base.' })
     async addPeople(@Body() people: PostPeopleDtoValidate): Promise<PeopleDto> {
-        return transformStrToMass([await this.peopleService.addPeople(transformMassToSrt(people))])[0]
+        return await this.peopleService.addPeople(people)
     }
 
     @Post("delete/:id")
@@ -42,11 +44,11 @@ export class PeopleController {
     @Post("update")
     @ApiResponse({ status: 201, description: 'Update one people by id in data base.' })
     async updatePeople(@Body() body: UpdatePeopleDtoValidate): Promise<PeopleDto> {
-        return transformStrToMass([await this.peopleService.updatePeople(body.id, transformMassToSrt(body))])[0]
+        return await this.peopleService.updatePeople(body.id, body)
     }
 
     @Post("/:id/addimage")
-    @ApiResponse({ status: 201, description: 'Upload files by people id' })
+    @ApiResponse({ status: 201, description: 'Upload images by people id' })
     @ApiConsumes('multipart/form-data')
     @ApiParam({ name: 'id', type: 'integer' })
     @ApiBody({ schema: { type: 'object', properties: { files: { type: 'array', items: { type: 'string', format: 'binary' } } } } })
@@ -88,29 +90,3 @@ export class PeopleController {
     }
 
 }
-
-function transformMassToSrt(people: PostPeopleDtoValidate | UpdatePeopleDtoValidate): PeopleEntity {
-    for (let key in people) {
-        if (Array.isArray(people[key])) {
-            people[key] = people[key].join(", ");
-        } else {
-            people[key] = people[key]
-        }
-    }
-    return <PeopleEntity>people
-}
-
-function transformStrToMass(people: PeopleEntity[]): PeopleDto[] {
-    let newPeople: PeopleDto[] = [];
-    people.forEach(el => {
-        let newEl: PeopleDto = el
-        newEl.species = el.species.split(", ");
-        newEl.films = el.films.split(", ");
-        newEl.starships = el.starships.split(", ");
-        newEl.vehicles = el.vehicles.split(", ");
-        newPeople.push(newEl);
-    })
-    return newPeople;
-}
-
-

@@ -1,40 +1,31 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class PeopleEntity {
+export class FilmsEntity {
 
     @PrimaryGeneratedColumn()
 	id: number;
 	
     @Column()
-    name: string;
+    title: string;
 
     @Column()
-	height: number;
+	episode_id: number;
 
     @Column()
-	mass: number;
+	opening_crawl: string;
 
     @Column()
-	hair_color: string;
+	director: string;
 
     @Column()
-	skin_color: string;
+	producer: string;
 
     @Column()
-	eye_color: string;
-
-    @Column()
-	birth_year: string;
-
-    @Column()
-	gender: string;
-
-    @Column()
-	homeworld: string;
+	release_date: string;
 
     @Column({type: 'simple-array'})
-	films: string[]; //urls
+	characters: string[]; //urls
 
     @Column({type: 'simple-array'})
 	species: string[]; //urls
@@ -44,6 +35,9 @@ export class PeopleEntity {
 
     @Column({type: 'simple-array'})
 	starships: string[]; //urls
+
+    @Column({type: 'simple-array'})
+	planets: string[]; //urls
 
     @Column()
 	created: string;

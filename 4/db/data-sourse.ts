@@ -1,6 +1,8 @@
 import { PeopleEntity } from "src/people/entity/people.entity";
 import { DataSource, DataSourceOptions } from "typeorm";
 import migrations from "./migrations"
+import { FilmsEntity } from "src/films/entity/films.entity";
+import { StarshipsEntity } from "src/starships/entity/starships.entity";
 
 export const dataSourseOptions: DataSourceOptions = {
     type: "mysql",
@@ -9,7 +11,7 @@ export const dataSourseOptions: DataSourceOptions = {
     username: "sqluser",
     password: "password",
     database: "star-wars",
-    entities: [PeopleEntity],
+    entities: [PeopleEntity, FilmsEntity, StarshipsEntity],
     synchronize: true, 
     migrations: migrations
   };

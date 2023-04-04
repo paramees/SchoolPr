@@ -1,58 +1,48 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsArray, IsNotEmpty } from 'class-validator';
 
-export class PostPeopleDtoValidate {
+export class UpdateFilmsDtoValidate {
+
+	@IsNotEmpty()
+	@IsNumber()
+	@ApiProperty()
+	id: number
 	
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-    name: string;
+    title: string;
 
 	@IsNumber()
 	@ApiProperty()
 	@IsNotEmpty()
-	height: number;
-
-	@IsNumber()
-	@ApiProperty()
-	@IsNotEmpty()
-	mass: number;
+	episode_id: number;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	hair_color: string;
+	opening_crawl: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	skin_color: string;
+	director: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	eye_color: string;
+	producer: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	birth_year: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	gender: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	homeworld: string;
+	release_date: string;
 
 	@IsArray()
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	films: string[]; //urls
+	characters: string[]; //urls
 
 	@IsArray()
 	@IsNotEmpty()
@@ -71,6 +61,12 @@ export class PostPeopleDtoValidate {
 	@IsString({ each: true })
 	@ApiProperty()
 	starships: string[]; //urls
+
+	@IsArray()
+	@IsNotEmpty()
+	@IsString({ each: true })
+	@ApiProperty()
+	planets: string[]; //urls
 
 	@IsString()
 	@IsNotEmpty()
