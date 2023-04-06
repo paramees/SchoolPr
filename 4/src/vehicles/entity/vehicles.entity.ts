@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class StarshipsEntity {
+export class VehiclesEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -13,7 +13,7 @@ export class StarshipsEntity {
     model: string;
 
     @Column()
-    starship_class: string;
+    vehicle_class: string;
 
     @Column()
     manufacturer: string;
@@ -32,12 +32,6 @@ export class StarshipsEntity {
 
     @Column()
     max_atmosphering_speed: string;
-
-    @Column()
-    hyperdrive_rating: string;
-
-    @Column()
-    MGLT: string;
 
     @Column()
     cargo_capacity: string;

@@ -43,7 +43,7 @@ export class PeopleController {
 
     @Post("update")
     @ApiResponse({ status: 201, description: 'Update one people by id in data base.' })
-    async updatePeople(@Body() body: UpdatePeopleDtoValidate): Promise<PeopleDto> {
+    async updatePeople(@Body() body: UpdatePeopleDtoValidate): Promise<String | PeopleDto> {
         return await this.peopleService.updatePeople(body.id, body)
     }
 
@@ -67,12 +67,13 @@ export class PeopleController {
             cb(null, true);
         },
     }))
-    addPeopleImage(@Param('id', ParseIntPipe) id: number, @UploadedFiles() files: Express.Multer.File[]) {
+    addPeopleImage(@Param('id', ParseIntPipe) id: number, @UploadedFiles() files: Express.Multer.File[]): Promise<String | PeopleDto> {
         let filenames = files.map(file => file.filename);
         return this.peopleService.addPeopleImage(id, filenames)
     }
 
     @Post("/:id/deleteimage")
+    @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one people image by people id and image name.' })
     removePeopleImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): string {
         this.peopleService.removePeopleImage(id, body.name)

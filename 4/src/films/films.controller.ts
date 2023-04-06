@@ -73,6 +73,7 @@ export class FilmsController {
     }
 
     @Post("/:id/deleteimage")
+    @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one film image by film id and image name.' })
     removefilmsImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): string {
         this.filmsService.removeFilmsImage(id, body.name)

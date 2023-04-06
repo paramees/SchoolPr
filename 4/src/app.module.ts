@@ -7,6 +7,9 @@ import { AppService } from './app.service';
 import { PeopleModule } from './people/people.module';
 import { FilmsModule } from './films/films.module';
 import { StarshipsModule } from './starships/starships.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { SpeciesModule } from './species/species.module';
+import { PlanetsModule } from './planets/planets.module';
 
 
 @Module({
@@ -14,7 +17,10 @@ import { StarshipsModule } from './starships/starships.module';
   TypeOrmModule.forRoot(dataSourseOptions),
     PeopleModule,
     FilmsModule,
-    StarshipsModule
+    StarshipsModule,
+    VehiclesModule,
+    SpeciesModule,
+    PlanetsModule
   ],
   controllers: [AppController],
   providers: [AppService],

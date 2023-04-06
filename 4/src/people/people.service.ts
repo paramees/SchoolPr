@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PeopleEntity } from './entity/people.entity';
-import fs, { createReadStream } from 'fs';
+import { ReadStream, createReadStream, unlink } from 'fs';
+import { FilmsEntity } from 'src/films/entity/films.entity';
+
 
 @Injectable()
 export class PeopleService {
   constructor(
     @InjectRepository(PeopleEntity)
     private peopleRepository: Repository<PeopleEntity>,
+    @InjectRepository(FilmsEntity)
+    private filmsRepository: Repository<FilmsEntity>,
   ) { }
 
   getLastTenPeople(): Promise<PeopleEntity[]> {
     return this.peopleRepository.find({
       order: { id: 'DESC' },
       take: 10,
+      relations: {filmsObjs: true}
     });
   }
 
@@ -23,7 +28,13 @@ export class PeopleService {
   }
 
   async addPeople(people: Partial<PeopleEntity>): Promise<PeopleEntity> {
-    if (!people.image_names) people.image_names = [];
+    people.image_names = [];
+    people.filmsObjs = [];
+    for (let i = 0; i < people.films.length; i++) {
+      let film = await this.filmsRepository.findOneBy({url: people.films[i]})
+      console.log(film + "   " + people.films[i])
+      if (film) people.filmsObjs.push(film)
+    }
     return await this.peopleRepository.save(people);
   }
 
@@ -31,10 +42,10 @@ export class PeopleService {
     await this.peopleRepository.delete(id);
   }
 
-  async updatePeople(id: number, peopleUpd: Partial<PeopleEntity>): Promise<PeopleEntity> | null {
+  async updatePeople(id: number, peopleUpd: Partial<PeopleEntity>): Promise<string | PeopleEntity> {
     let people = await this.peopleRepository.findOneBy({ id });
     if (!people) {
-      return null;
+      return "no people with id: " + id;
     }
     Object.assign(people, peopleUpd);
     return this.peopleRepository.save(people);
@@ -56,7 +67,7 @@ export class PeopleService {
     }
     people.image_names = people.image_names.filter(el => el !== name);
 
-    fs.unlink(name, (err) => {
+    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
       if (err) {
         console.error(err);
         return;
@@ -66,7 +77,7 @@ export class PeopleService {
     return await this.peopleRepository.save(people);
   }
 
-  async getPeopleImage(name: string): Promise<fs.ReadStream> {
+  async getPeopleImage(name: string): Promise<ReadStream> {
     return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
   }
 

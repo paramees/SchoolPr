@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FilmsEntity } from './entity/films.entity';
-import fs, { createReadStream } from 'fs';
+import { ReadStream, createReadStream, unlink } from 'fs';
 
 @Injectable()
 export class FilmsService {
@@ -24,6 +24,7 @@ export class FilmsService {
 
   async addFilms(films: Partial<FilmsEntity>): Promise<FilmsEntity> {
     if (!films.image_names) films.image_names = [];
+    
     return await this.filmsRepository.save(films);
   }
 
@@ -56,7 +57,7 @@ export class FilmsService {
     }
     films.image_names = films.image_names.filter(el => el !== name);
 
-    fs.unlink(name, (err) => {
+    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
       if (err) {
         console.error(err);
         return;
@@ -66,7 +67,7 @@ export class FilmsService {
     return await this.filmsRepository.save(films);
   }
 
-  async getFilmsImage(name: string): Promise<fs.ReadStream> {
+  async getFilmsImage(name: string): Promise<ReadStream> {
     return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
   }
 

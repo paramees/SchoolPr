@@ -73,6 +73,7 @@ export class StarshipsController {
     }
 
     @Post("/:id/deleteimage")
+    @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one starship image by starship id and image name.' })
     removeStarshipsImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): string {
         this.starshipsService.removeStarshipsImage(id, body.name)

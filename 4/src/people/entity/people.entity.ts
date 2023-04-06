@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { FilmsEntity } from 'src/films/entity/films.entity';
 
 @Entity()
 export class PeopleEntity {
@@ -35,6 +36,14 @@ export class PeopleEntity {
 
     @Column({type: 'simple-array'})
 	films: string[]; //urls
+
+    @ManyToMany(() => FilmsEntity, films => films.characters, { cascade: true })
+    @JoinTable({
+    name: 'PeopleFilms',
+    joinColumns: [{ name: 'peopleId', referencedColumnName: 'id' }],
+    inverseJoinColumns: [{ name: 'filmsId', referencedColumnName: 'id' }]
+    })
+    filmsObjs: FilmsEntity[];
 
     @Column({type: 'simple-array'})
 	species: string[]; //urls

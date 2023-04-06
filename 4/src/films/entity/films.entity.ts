@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { PeopleEntity } from 'src/people/entity/people.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
 export class FilmsEntity {
@@ -12,7 +13,7 @@ export class FilmsEntity {
     @Column()
 	episode_id: number;
 
-    @Column()
+    @Column({type: 'text'})
 	opening_crawl: string;
 
     @Column()
@@ -26,6 +27,14 @@ export class FilmsEntity {
 
     @Column({type: 'simple-array'})
 	characters: string[]; //urls
+
+    @ManyToMany(() => PeopleEntity, people => people.films, { cascade: true })
+    @JoinTable({
+      name: 'PeopleFilms',
+      joinColumns: [{ name: 'filmsId', referencedColumnName: 'id' }],
+      inverseJoinColumns: [{ name: 'peopleId', referencedColumnName: 'id' }]
+    })
+    charactersObj: PeopleEntity[]
 
     @Column({type: 'simple-array'})
 	species: string[]; //urls

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsArray, IsNotEmpty } from 'class-validator';
 
-export class UpdateStarshipsDtoValidate {
+export class UpdateSpeciesDtoValidate {
 
 	@IsNotEmpty()
 	@IsNumber()
@@ -11,67 +11,52 @@ export class UpdateStarshipsDtoValidate {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-    name: string;
-	
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	model: string
+	name: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	starship_class: string;
+	classification: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	manufacturer: string;
+	designation: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	cost_in_credits: string;
+	average_height: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	length: string;
+	average_lifespan: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	crew: string;
+	eye_colors: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	passengers: string;
+	hair_colors: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	max_atmosphering_speed: string;
+	skin_colors: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	hyperdrive_rating: string;
+	language: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty()
-	MGLT: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	cargo_capacity: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty()
-	consumables: string;
+	homeworld: string;
 
 	@IsArray()
 	@IsNotEmpty()
@@ -83,7 +68,7 @@ export class UpdateStarshipsDtoValidate {
 	@IsNotEmpty()
 	@IsString({ each: true })
 	@ApiProperty()
-	pilots: string[]; //urls
+	people: string[]; //urls
 
 	@IsString()
 	@IsNotEmpty()
