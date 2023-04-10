@@ -29,8 +29,9 @@ export class PeopleController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostPeopleDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one people in data base.' })
-    async addPeople(@Body() people: PostPeopleDtoValidate): Promise<PeopleDto> {
+    async addPeople(@Body() people: PostPeopleDtoValidate[]): Promise<PeopleDto[]> {
         return await this.peopleService.addPeople(people)
     }
 

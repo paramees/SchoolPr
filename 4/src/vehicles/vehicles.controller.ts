@@ -29,9 +29,10 @@ export class VehiclesController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostVehiclesDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one vehicle to data base.' })
-    async addVehicles(@Body() vehicle: PostVehiclesDtoValidate): Promise<VehiclesDto> {
-        return await this.VehiclesService.addVehicles(vehicle)
+    async addVehicles(@Body() vehicles: PostVehiclesDtoValidate[]): Promise<VehiclesDto[]> {
+        return await this.VehiclesService.addVehicles(vehicles)
     }
 
     @Post("delete/:id")

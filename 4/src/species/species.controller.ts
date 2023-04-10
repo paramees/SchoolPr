@@ -29,8 +29,9 @@ export class SpeciesController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostSpeciesDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one specie to data base.' })
-    async addSpecies(@Body() Specie: PostSpeciesDtoValidate): Promise<SpeciesDto> {
+    async addSpecies(@Body() Specie: PostSpeciesDtoValidate[]): Promise<SpeciesDto[]> {
         return await this.speciesService.addSpecies(Specie)
     }
 

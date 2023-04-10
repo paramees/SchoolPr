@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { FilmsEntity } from 'src/films/entity/films.entity';
+import { PeopleEntity } from 'src/people/entity/people.entity';
+import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()
 export class VehiclesEntity {
@@ -42,8 +44,14 @@ export class VehiclesEntity {
     @Column("simple-array")
     films: string[]; //urls
 
+    @ManyToMany(() => FilmsEntity, films => films.vehiclesObjs, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    filmsObjs: FilmsEntity[];
+
     @Column("simple-array")
     pilots: string[]; //urls
+
+    @ManyToMany(() => PeopleEntity, people => people.vehiclesObjs, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    pilotsObjs: PeopleEntity[];
 
     @Column()
     created: string;

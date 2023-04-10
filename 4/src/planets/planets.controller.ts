@@ -29,8 +29,9 @@ export class PlanetsController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostPlanetsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one planet to data base.' })
-    async addPlanets(@Body() planet: PostPlanetsDtoValidate): Promise<PlanetsDto> {
+    async addPlanets(@Body() planet: PostPlanetsDtoValidate[]): Promise<PlanetsDto[]> {
         return await this.planetsService.addPlanets(planet)
     }
 

@@ -3,28 +3,41 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StarshipsEntity } from './entity/starships.entity';
 import { ReadStream, createReadStream, unlink } from 'fs';
+import { PeopleEntity } from 'src/people/entity/people.entity';
+import { FilmsEntity } from 'src/films/entity/films.entity';
 
 @Injectable()
 export class StarshipsService {
   constructor(
     @InjectRepository(StarshipsEntity)
     private starshipsRepository: Repository<StarshipsEntity>,
+    @InjectRepository(FilmsEntity)
+    private filmsRepository: Repository<FilmsEntity>,
+    @InjectRepository(PeopleEntity)
+    private pilotsRepository: Repository<PeopleEntity>,
   ) { }
+
+  private relations = ['pilots', 'films'];
 
   getLastTenStarships(): Promise<StarshipsEntity[]> {
     return this.starshipsRepository.find({
       order: { id: 'DESC' },
       take: 10,
+      relations: this.relations
     });
   }
 
   getStarshipsById(id: number): Promise<StarshipsEntity> | null {
-    return this.starshipsRepository.findOneBy({ id });
+    return this.starshipsRepository.findOne({ where: { id: id}, relations: this.relations });
   }
 
-  async addStarships(starship: Partial<StarshipsEntity>): Promise<StarshipsEntity> {
-    if (!starship.image_names) starship.image_names = [];
-    return await this.starshipsRepository.save(starship);
+  async addStarships(starships: Partial<StarshipsEntity>[]): Promise<StarshipsEntity[]> {
+    let result: StarshipsEntity[] = [];
+    for (let i = 0; i < starships.length; i++) {
+      starships[i].image_names = [];
+      result.push(await this.starshipsRepository.save(await this.addRelations(starships[i])));
+    }
+    return result
   }
 
   async removeStarshipsById(id: number): Promise<void> {
@@ -37,7 +50,7 @@ export class StarshipsService {
       return null;
     }
     Object.assign(starship, starshipUpd);
-    return this.starshipsRepository.save(starship);
+    return this.starshipsRepository.save(await this.addRelations(starship));
   }
 
   async addStarshipsImage(id: number, filenames: string[]): Promise<string | StarshipsEntity> {
@@ -69,5 +82,18 @@ export class StarshipsService {
   async getStarshipsImage(name: string): Promise<ReadStream> {
     return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
   }
+
+  async addRelations(obj: Partial<StarshipsEntity>): Promise<Partial<StarshipsEntity>> {
+      for (const rel of this.relations) {
+        if (!obj[rel + "Objs"] || obj[rel]) obj[rel + "Objs"] = [];
+  
+        for (let i = 0; i < obj[rel].length; i++) {
+          let relObj = await this[rel + 'Repository'].findOneBy({url: obj[rel][i]})
+          if (relObj) obj[rel + "Objs"].push(relObj);
+        }
+        
+      }
+      return obj
+    }
 
 }

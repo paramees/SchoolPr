@@ -29,9 +29,10 @@ export class StarshipsController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostStarshipsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one starship to data base.' })
-    async addStarships(@Body() starship: PostStarshipsDtoValidate): Promise<StarshipsDto> {
-        return await this.starshipsService.addStarships(starship)
+    async addStarships(@Body() starships: PostStarshipsDtoValidate[]): Promise<StarshipsDto[]> {
+        return await this.starshipsService.addStarships(starships)
     }
 
     @Post("delete/:id")

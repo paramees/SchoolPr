@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsArray, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsArray, IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class PostPeopleDtoValidate {
 	
@@ -8,12 +9,12 @@ export class PostPeopleDtoValidate {
 	@ApiProperty()
     name: string;
 
-	@IsNumber()
+	@IsNumberString()
 	@ApiProperty()
 	@IsNotEmpty()
 	height: number;
 
-	@IsNumber()
+	@IsNumberString()
 	@ApiProperty()
 	@IsNotEmpty()
 	mass: number;

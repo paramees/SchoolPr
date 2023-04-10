@@ -29,8 +29,9 @@ export class FilmsController {
     }
 
     @Post("add")
+    @ApiBody({type: [PostFilmsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one film to data base.' })
-    async addfilms(@Body() film: PostFilmsDtoValidate): Promise<FilmsDto> {
+    async addfilms(@Body() film: PostFilmsDtoValidate[]): Promise<FilmsDto[]> {
         return await this.filmsService.addFilms(film)
     }
 

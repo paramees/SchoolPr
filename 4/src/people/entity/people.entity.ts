@@ -1,5 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
 import { FilmsEntity } from 'src/films/entity/films.entity';
+import { SpeciesEntity } from 'src/species/entity/species.entity';
+import { VehiclesEntity } from 'src/vehicles/entity/vehicles.entity';
+import { StarshipsEntity } from 'src/starships/entity/starships.entity';
+import { PlanetsEntity } from 'src/planets/entity/planets.entity';
 
 @Entity()
 export class PeopleEntity {
@@ -34,25 +38,36 @@ export class PeopleEntity {
     @Column()
 	homeworld: string;
 
+    @ManyToOne(() => PlanetsEntity, planets => planets.residentsObjs)
+    @JoinColumn({name: 'homeworldId'})
+    homeworldObj: PlanetsEntity;
+
     @Column({type: 'simple-array'})
 	films: string[]; //urls
 
-    @ManyToMany(() => FilmsEntity, films => films.characters, { cascade: true })
-    @JoinTable({
-    name: 'PeopleFilms',
-    joinColumns: [{ name: 'peopleId', referencedColumnName: 'id' }],
-    inverseJoinColumns: [{ name: 'filmsId', referencedColumnName: 'id' }]
-    })
+    @ManyToMany(() => FilmsEntity, films => films.charactersObjs, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     filmsObjs: FilmsEntity[];
 
     @Column({type: 'simple-array'})
 	species: string[]; //urls
 
+    @ManyToMany(() => SpeciesEntity, species => species.peopleObjs)
+    @JoinTable({ name: 'SpeciesPeople' })
+    speciesObjs: SpeciesEntity[];
+
     @Column({type: 'simple-array'})
 	vehicles: string[]; //urls
 
+    @ManyToMany(() => VehiclesEntity, vehicles => vehicles.pilotsObjs)
+    @JoinTable({ name: 'VehiclesPeople' })
+    vehiclesObjs: VehiclesEntity[];
+
     @Column({type: 'simple-array'})
 	starships: string[]; //urls
+
+    @ManyToMany(() => StarshipsEntity, starships => starships.pilotsObjs)
+    @JoinTable({ name: 'StarshipsPeople' })
+    starshipsObjs: StarshipsEntity[];
 
     @Column()
 	created: string;
