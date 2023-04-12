@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourseOptions } from 'db/data-sourse';
+import { Config } from 'db/data-sourse';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PeopleModule } from './people/people.module';
@@ -13,8 +13,8 @@ import { PlanetsModule } from './planets/planets.module';
 
 
 @Module({
-  imports: [ConfigModule.forRoot(),
-  TypeOrmModule.forRoot(dataSourseOptions),
+  imports: [ConfigModule.forRoot({isGlobal: true}),
+  TypeOrmModule.forRoot(new Config(new ConfigService).dataSourseOptions),
     PeopleModule,
     FilmsModule,
     StarshipsModule,

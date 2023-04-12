@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -31,7 +31,7 @@ export class PeopleController {
     @Post("add")
     @ApiBody({type: [PostPeopleDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one people in data base.' })
-    async addPeople(@Body() people: PostPeopleDtoValidate[]): Promise<PeopleDto[]> {
+    async addPeople(@Body(new ParseArrayPipe({ items: PostPeopleDtoValidate })) people: PostPeopleDtoValidate[]): Promise<PeopleDto[]> {
         return await this.peopleService.addPeople(people)
     }
 

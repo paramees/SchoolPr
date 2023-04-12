@@ -12,11 +12,13 @@ export class PostPeopleDtoValidate {
 	@IsNumberString()
 	@ApiProperty()
 	@IsNotEmpty()
+	@Transform(({ value }) => parseInt(value))
 	height: number;
 
 	@IsNumberString()
 	@ApiProperty()
 	@IsNotEmpty()
+	@Transform(({ value }) => parseInt(value))
 	mass: number;
 
 	@IsString()

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Request, Response } from 'express';
@@ -31,7 +31,7 @@ export class FilmsController {
     @Post("add")
     @ApiBody({type: [PostFilmsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one film to data base.' })
-    async addfilms(@Body() film: PostFilmsDtoValidate[]): Promise<FilmsDto[]> {
+    async addfilms(@Body(new ParseArrayPipe({ items: PostFilmsDtoValidate })) film: PostFilmsDtoValidate[]): Promise<FilmsDto[]> {
         return await this.filmsService.addFilms(film)
     }
 

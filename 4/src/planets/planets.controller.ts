@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Request, Response } from 'express';
@@ -31,7 +31,7 @@ export class PlanetsController {
     @Post("add")
     @ApiBody({type: [PostPlanetsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one planet to data base.' })
-    async addPlanets(@Body() planet: PostPlanetsDtoValidate[]): Promise<PlanetsDto[]> {
+    async addPlanets(@Body(new ParseArrayPipe({ items: PostPlanetsDtoValidate })) planet: PostPlanetsDtoValidate[]): Promise<PlanetsDto[]> {
         return await this.planetsService.addPlanets(planet)
     }
 

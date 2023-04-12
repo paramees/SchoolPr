@@ -22,12 +22,16 @@ Go to the directory with project.
 $ npm install
 ```
 
+```
+$ npm run migration:run
+```
+
 You can config app in `.env` file in the root of the project.
 
 Then.
 
 ```
-$ npm start
+$ npm run start
 ```
 
 
