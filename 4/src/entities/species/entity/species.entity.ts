@@ -1,6 +1,6 @@
-import { FilmsEntity } from 'src/films/entity/films.entity';
-import { PeopleEntity } from 'src/people/entity/people.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { FilmsEntity } from 'src/entities/films/entity/films.entity';
+import { PeopleEntity } from 'src/entities/people/entity/people.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
 @Entity()
 export class SpeciesEntity {

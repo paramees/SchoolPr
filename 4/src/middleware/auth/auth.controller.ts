@@ -1,16 +1,27 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Request, Controller, Post, HttpCode, HttpStatus, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LocalAuthGuard } from './local-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
-@ApiTags("FilmsApi-CRUD")
+
+@ApiTags("Login")
 @Controller('auth')
+@ApiBearerAuth()
 export class AuthController {
     constructor(private authService: AuthService) {}
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
     @ApiResponse({ status: 200, description: 'Login!' })
-    signIn(@Body() signInDto: Record<string, any>) {
-        return this.authService.signIn(signInDto.username, signInDto.password);
+    @UseGuards(LocalAuthGuard)
+    async login(@Request() req) {
+        return this.authService.login(req.user);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Request() req) {
+    return req.user;
+  }
 }

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PeopleEntity } from './entity/people.entity';
-import { FilmsEntity } from 'src/films/entity/films.entity';
-import { StarshipsEntity } from 'src/starships/entity/starships.entity';
-import { VehiclesEntity } from 'src/vehicles/entity/vehicles.entity';
-import { SpeciesEntity } from 'src/species/entity/species.entity';
-import { PlanetsEntity } from 'src/planets/entity/planets.entity';
+import { FilmsEntity } from 'src/entities/films/entity/films.entity';
+import { StarshipsEntity } from 'src/entities/starships/entity/starships.entity';
+import { VehiclesEntity } from 'src/entities/vehicles/entity/vehicles.entity';
+import { SpeciesEntity } from 'src/entities/species/entity/species.entity';
+import { PlanetsEntity } from 'src/entities/planets/entity/planets.entity';
 import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 

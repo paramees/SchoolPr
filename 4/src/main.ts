@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('SW web')
     .setDescription('IDK star wars?')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -1,5 +1,5 @@
-import { FilmsEntity } from 'src/films/entity/films.entity';
-import { PeopleEntity } from 'src/people/entity/people.entity';
+import { FilmsEntity } from 'src/entities/films/entity/films.entity';
+import { PeopleEntity } from 'src/entities/people/entity/people.entity';
 import { Entity, Column, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()

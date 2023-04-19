@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlanetsEntity } from './entity/planets.entity';
 import { PlanetsController } from './planets.controller';
 import { PlanetsService } from './planets.service';
-import { PeopleEntity } from 'src/people/entity/people.entity';
-import { FilmsEntity } from 'src/films/entity/films.entity';
+import { PeopleEntity } from 'src/entities/people/entity/people.entity';
+import { FilmsEntity } from 'src/entities/films/entity/films.entity';
 import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 @Module({

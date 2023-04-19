@@ -1,8 +1,8 @@
-import { PeopleEntity } from 'src/people/entity/people.entity';
-import { PlanetsEntity } from 'src/planets/entity/planets.entity';
-import { SpeciesEntity } from 'src/species/entity/species.entity';
-import { StarshipsEntity } from 'src/starships/entity/starships.entity';
-import { VehiclesEntity } from 'src/vehicles/entity/vehicles.entity';
+import { PeopleEntity } from 'src/entities/people/entity/people.entity';
+import { PlanetsEntity } from 'src/entities/planets/entity/planets.entity';
+import { SpeciesEntity } from 'src/entities/species/entity/species.entity';
+import { StarshipsEntity } from 'src/entities/starships/entity/starships.entity';
+import { VehiclesEntity } from 'src/entities/vehicles/entity/vehicles.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
