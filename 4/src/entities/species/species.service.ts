@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SpeciesEntity } from './entity/Species.entity';
-import { ReadStream, createReadStream, unlink } from 'fs';
 import { PeopleEntity } from 'src/people/entity/people.entity';
 import { FilmsEntity } from 'src/films/entity/films.entity';
+import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 @Injectable()
 export class SpeciesService {
@@ -15,6 +15,8 @@ export class SpeciesService {
     private filmsRepository: Repository<FilmsEntity>,
     @InjectRepository(PeopleEntity)
     private peopleRepository: Repository<PeopleEntity>,
+
+    private readonly imagesService: ImagesService
   ) { }
 
  private relations = ['films', 'people'];
@@ -53,34 +55,28 @@ export class SpeciesService {
     return this.speciesRepository.save(await this.addRelations(species));
   }
 
-  async addSpeciesImage(id: number, filenames: string[]): Promise<string | SpeciesEntity> {
+  async addSpeciesImage(id: number, files: Express.Multer.File[]): Promise<string | SpeciesEntity> {
     let species = await this.speciesRepository.findOneBy({ id });
     if (!species) {
-      return "no Species with id: " + id;
+      return "no species with id: " + id;
     }
-    filenames.forEach(el => species.image_names.push(el));
+    (await this.imagesService.addImages('specy', files)).forEach(el => species.image_names.push(el));
     return await this.speciesRepository.save(species);
   }
 
   async removeSpeciesImage(id: number, name: string): Promise<string | SpeciesEntity> {
     let species = await this.speciesRepository.findOneBy({ id });
     if (!species) {
-      return "no Species with id: " + id;
+      return "no species with id: " + id;
     }
+    if (!(await this.imagesService.deleteImage(name))) return "Image was not deleted!"
+
     species.image_names.filter(el => el !== name);
-
-    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
-
     return await this.speciesRepository.save(species);
   }
 
-  async getSpeciesImage(name: string): Promise<ReadStream> {
-    return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
+  async getSpeciesImage(name: string) {
+    return this.imagesService.getImage(name)
   }
 
   async addRelations(obj: Partial<SpeciesEntity>): Promise<Partial<SpeciesEntity>> {

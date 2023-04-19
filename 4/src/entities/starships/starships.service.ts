@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StarshipsEntity } from './entity/starships.entity';
-import { ReadStream, createReadStream, unlink } from 'fs';
 import { PeopleEntity } from 'src/people/entity/people.entity';
 import { FilmsEntity } from 'src/films/entity/films.entity';
+import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 @Injectable()
 export class StarshipsService {
@@ -15,6 +15,8 @@ export class StarshipsService {
     private filmsRepository: Repository<FilmsEntity>,
     @InjectRepository(PeopleEntity)
     private pilotsRepository: Repository<PeopleEntity>,
+
+    private readonly imagesService: ImagesService
   ) { }
 
   private relations = ['pilots', 'films'];
@@ -53,12 +55,12 @@ export class StarshipsService {
     return this.starshipsRepository.save(await this.addRelations(starship));
   }
 
-  async addStarshipsImage(id: number, filenames: string[]): Promise<string | StarshipsEntity> {
+  async addStarshipsImage(id: number, files: Express.Multer.File[]): Promise<string | StarshipsEntity> {
     let starship = await this.starshipsRepository.findOneBy({ id });
     if (!starship) {
       return "no starships with id: " + id;
     }
-    filenames.forEach(el => starship.image_names.push(el));
+    (await this.imagesService.addImages('starship', files)).forEach(el => starship.image_names.push(el));
     return await this.starshipsRepository.save(starship);
   }
 
@@ -67,20 +69,14 @@ export class StarshipsService {
     if (!starship) {
       return "no starships with id: " + id;
     }
+    if (!(await this.imagesService.deleteImage(name))) return "Image was not deleted!"
+
     starship.image_names.filter(el => el !== name);
-
-    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
-
     return await this.starshipsRepository.save(starship);
   }
 
-  async getStarshipsImage(name: string): Promise<ReadStream> {
-    return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
+  async getStarshipsImage(name: string) {
+    return this.imagesService.getImage(name)
   }
 
   async addRelations(obj: Partial<StarshipsEntity>): Promise<Partial<StarshipsEntity>> {

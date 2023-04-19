@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 
 import { VehiclesDto } from './dto/vehicles.dto';
@@ -53,42 +52,23 @@ export class VehiclesController {
     @ApiConsumes('multipart/form-data')
     @ApiParam({ name: 'id', type: 'integer' })
     @ApiBody({ schema: { type: 'object', properties: { files: { type: 'array', items: { type: 'string', format: 'binary' } } } } })
-    @UseInterceptors(FilesInterceptor('files', null, {
-        storage: diskStorage({
-            destination: './images/vehicles',
-            filename: (req: Request, file: Express.Multer.File, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                cb(null, uniqueSuffix + '.' + file.originalname.split('.').pop());
-            }
-        }),
-        fileFilter: (req: Request, file: Express.Multer.File, cb) => {
-            if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-                return cb(new Error('Only image files are allowed!'), false);
-            }
-            cb(null, true);
-        },
-    }))
+    @UseInterceptors(FilesInterceptor('files'))
     addVehiclesImage(@Param('id', ParseIntPipe) id: number, @UploadedFiles() files: Express.Multer.File[]) {
-        let filenames = files.map(file => file.filename);
-        return this.VehiclesService.addVehiclesImage(id, filenames)
+        return this.VehiclesService.addVehiclesImage(id, files)
     }
 
     @Post("/:id/deleteimage")
     @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one vehicle image by vehicle id and image name.' })
-    removeVehiclesImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): string {
-        this.VehiclesService.removeVehiclesImage(id, body.name)
-        return "Vehicles image with id " + id + " named " + body.name + " was deleted."
+    async removeVehiclesImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): Promise<string | VehiclesDto> {
+        return await this.VehiclesService.removeVehiclesImage(id, body.name)
     }
 
     @Get('images/:imageName')
     @ApiResponse({ status: 201, description: 'Get vehicle image by image name.' })
-    async getVehiclesImage(@Param('imageName') imageName: string, @Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
-        const file = await this.VehiclesService.getVehiclesImage(imageName);
-        res.set({
-            'Content-Type': 'image/' + imageName.split('.').pop(),
-          });
-        return new StreamableFile(file)
+    async getVehiclesImage(@Param('imageName') imageName: string, @Res() res: Response) {
+        res.attachment(imageName);
+        (await this.VehiclesService.getVehiclesImage(imageName)).pipe(res);
     }
 
 }

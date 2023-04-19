@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PeopleEntity } from './entity/people.entity';
-import { ReadStream, createReadStream, unlink } from 'fs';
 import { FilmsEntity } from 'src/films/entity/films.entity';
 import { StarshipsEntity } from 'src/starships/entity/starships.entity';
 import { VehiclesEntity } from 'src/vehicles/entity/vehicles.entity';
 import { SpeciesEntity } from 'src/species/entity/species.entity';
 import { PlanetsEntity } from 'src/planets/entity/planets.entity';
+import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 
 @Injectable()
@@ -25,6 +25,8 @@ export class PeopleService {
     private speciesRepository: Repository<SpeciesEntity>,
     @InjectRepository(PlanetsEntity)
     private planetsRepository: Repository<PlanetsEntity>,
+
+    private readonly imagesService: ImagesService
   ) { }
 
   private  relations = ['films', 'starships', 'vehicles', 'species'];
@@ -71,12 +73,12 @@ export class PeopleService {
     return this.peopleRepository.save(await this.addRelations(people));
   }
 
-  async addPeopleImage(id: number, filenames: string[]): Promise<string | PeopleEntity> {
+  async addPeopleImage(id: number, files: Express.Multer.File[]): Promise<string | PeopleEntity> {
     let people = await this.peopleRepository.findOneBy({ id });
     if (!people) {
       return "no people with id: " + id;
     }
-    filenames.forEach(el => people.image_names.push(el))
+    (await this.imagesService.addImages('people', files)).forEach(el => people.image_names.push(el));
     return await this.peopleRepository.save(people);
   }
 
@@ -85,20 +87,14 @@ export class PeopleService {
     if (!people) {
       return "no people with id: " + id;
     }
+    if (!(await this.imagesService.deleteImage(name))) return "Image was not deleted!"
+
     people.image_names = people.image_names.filter(el => el !== name);
-
-    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
-
     return await this.peopleRepository.save(people);
   }
 
-  async getPeopleImage(name: string): Promise<ReadStream> {
-    return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
+  async getPeopleImage(name: string) {
+    return this.imagesService.getImage(name)
   }
 
   async addRelations(obj: Partial<PeopleEntity>): Promise<Partial<PeopleEntity>> {

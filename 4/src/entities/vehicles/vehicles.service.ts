@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VehiclesEntity } from './entity/vehicles.entity';
-import { createReadStream, unlink, ReadStream  } from 'fs';
 import { PeopleEntity } from 'src/people/entity/people.entity';
 import { FilmsEntity } from 'src/films/entity/films.entity';
+import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 @Injectable()
 export class VehiclesService {
@@ -14,6 +14,8 @@ export class VehiclesService {
     private filmsRepository: Repository<FilmsEntity>,
     @InjectRepository(PeopleEntity)
     private pilotsRepository: Repository<PeopleEntity>,
+
+    private readonly imagesService: ImagesService
   ) { }
 
   private relations = ['pilots', 'films'];
@@ -52,12 +54,12 @@ export class VehiclesService {
     return this.vehiclesRepository.save(await this.addRelations(vehicle));
   }
 
-  async addVehiclesImage(id: number, filenames: string[]): Promise<string | VehiclesEntity> {
+  async addVehiclesImage(id: number, files: Express.Multer.File[]): Promise<string | VehiclesEntity> {
     let vehicle = await this.vehiclesRepository.findOneBy({ id });
     if (!vehicle) {
       return "no vehicles with id: " + id;
     }
-    filenames.forEach(el => vehicle.image_names.push(el));
+    (await this.imagesService.addImages('vehicle', files)).forEach(el => vehicle.image_names.push(el));
     return await this.vehiclesRepository.save(vehicle);
   }
 
@@ -66,20 +68,14 @@ export class VehiclesService {
     if (!vehicle) {
       return "no vehicles with id: " + id;
     }
+    if (!(await this.imagesService.deleteImage(name))) return "Image was not deleted!"
+
     vehicle.image_names.filter(el => el !== name);
-
-    unlink(__dirname.replace('dist\\src', 'images') + '\\' + name, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
-
     return await this.vehiclesRepository.save(vehicle);
   }
 
-  async getVehiclesImage(name: string): Promise<ReadStream> {
-    return createReadStream(__dirname.replace('dist\\src', 'images') + '\\' + name);
+  async getVehiclesImage(name: string) {
+    return this.imagesService.getImage(name)
   }
 
   async addRelations(obj: Partial<VehiclesEntity>): Promise<Partial<VehiclesEntity>> {

@@ -5,6 +5,9 @@
 #images
 **/images
 
+
+*.env
+
 # Logs
 logs
 *.log

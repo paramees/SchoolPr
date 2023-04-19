@@ -8,6 +8,7 @@ import { SpeciesEntity } from 'src/species/entity/species.entity';
 import { VehiclesEntity } from 'src/vehicles/entity/vehicles.entity';
 import { StarshipsEntity } from 'src/starships/entity/starships.entity';
 import { PlanetsEntity } from 'src/planets/entity/planets.entity';
+import { ImagesService } from 'src/middleware/images_aws/images.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PeopleEntity]),
@@ -17,6 +18,6 @@ import { PlanetsEntity } from 'src/planets/entity/planets.entity';
             TypeOrmModule.forFeature([StarshipsEntity]),
             TypeOrmModule.forFeature([PlanetsEntity])],
   controllers: [FilmsController],
-  providers: [FilmsService]
+  providers: [FilmsService, ImagesService]
 })
 export class FilmsModule { }

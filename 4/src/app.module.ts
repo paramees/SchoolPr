@@ -2,14 +2,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Config } from 'db/data-sourse';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PeopleModule } from './people/people.module';
-import { FilmsModule } from './films/films.module';
-import { StarshipsModule } from './starships/starships.module';
-import { VehiclesModule } from './vehicles/vehicles.module';
-import { SpeciesModule } from './species/species.module';
-import { PlanetsModule } from './planets/planets.module';
+
+import { UsersModule } from './middleware/users/users.module';
+import { AuthModule } from './middleware/auth/auth.module';
+import { FilmsModule } from './entities/films/films.module';
+import { PeopleModule } from './entities/people/people.module';
+import { PlanetsModule } from './entities/planets/planets.module';
+import { SpeciesModule } from './entities/species/species.module';
+import { StarshipsModule } from './entities/starships/starships.module';
+import { VehiclesModule } from './entities/vehicles/vehicles.module';
+
 
 
 @Module({
@@ -20,9 +22,11 @@ import { PlanetsModule } from './planets/planets.module';
     StarshipsModule,
     VehiclesModule,
     SpeciesModule,
-    PlanetsModule
+    PlanetsModule,
+    AuthModule,
+    UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule { }
