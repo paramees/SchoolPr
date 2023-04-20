@@ -24,12 +24,12 @@ export class VehiclesService {
     return this.vehiclesRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getVehiclesById(id: number): Promise<VehiclesEntity> | null {
-    return this.vehiclesRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.vehiclesRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addVehicles(vehicles: Partial<VehiclesEntity>[]): Promise<VehiclesEntity[]> {

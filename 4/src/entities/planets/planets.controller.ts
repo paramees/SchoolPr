@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
@@ -8,6 +8,9 @@ import { PostPlanetsDtoValidate } from './dto/post.planets-validation.dto';
 import { UpdatePlanetsDtoValidate } from './dto/update.planets-validation.dto';
 
 import { PlanetsService } from './planets.service';
+import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
+import { Roles } from 'src/middleware/roles.decorator';
 
 
 @ApiTags("PlanetsApi-CRUD")
@@ -16,18 +19,24 @@ export class PlanetsController {
     constructor(private readonly planetsService: PlanetsService) { }
 
     @Get()
+    @Roles('user', 'admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 200, description: 'Return 10 last planets in data base.' })
     async getLastTenPlanets(): Promise<PlanetsDto[]> {
         return await this.planetsService.getLastTenPlanets()
     }
 
     @Get("/:id")
+    @Roles('user', 'admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 200, description: 'Return planet by id in data base.' })
     async getOneById(@Param('id', ParseIntPipe) id: number): Promise<PlanetsDto> {
         return await this.planetsService.getPlanetsById(id)
     }
 
     @Post("add")
+    @Roles('admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiBody({type: [PostPlanetsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one planet to data base.' })
     async addPlanets(@Body(new ParseArrayPipe({ items: PostPlanetsDtoValidate })) planet: PostPlanetsDtoValidate[]): Promise<PlanetsDto[]> {
@@ -35,6 +44,8 @@ export class PlanetsController {
     }
 
     @Post("delete/:id")
+    @Roles('admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Remove one planet by id from data base.' })
     removePlanetsById(@Param('id', ParseIntPipe) id: number): string {
         this.planetsService.removePlanetsById(id)
@@ -42,12 +53,16 @@ export class PlanetsController {
     }
 
     @Post("update")
+    @Roles('admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Update one planet by id in data base.' })
     async updatePlanets(@Body() body: UpdatePlanetsDtoValidate): Promise<PlanetsDto> {
         return await this.planetsService.updatePlanets(body.id, body)
     }
 
     @Post("/:id/addimage")
+    @Roles('admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Upload images by planet id' })
     @ApiConsumes('multipart/form-data')
     @ApiParam({ name: 'id', type: 'integer' })
@@ -58,6 +73,8 @@ export class PlanetsController {
     }
 
     @Post("/:id/deleteimage")
+    @Roles('admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one planet image by planet id and image name.' })
     removePlanetsImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): Promise<string | PlanetsDto> {
@@ -65,6 +82,8 @@ export class PlanetsController {
     }
 
     @Get('images/:imageName')
+    @Roles('user', 'admin')
+    @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Get planet image by image name.' })
     async getPlanetsImage(@Param('imageName') imageName: string, @Res() res: Response) {
         res.attachment(imageName);

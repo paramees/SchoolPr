@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class addRelations1681157899735 implements MigrationInterface {
-    name = 'addRelations1681157899735'
+export class addFixedRelations1682027376213 implements MigrationInterface {
+    name = 'addFixedRelations1682027376213'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`people_entity\` DROP FOREIGN KEY \`FK_8ffd2fd0937967b3498f4d90375\``);

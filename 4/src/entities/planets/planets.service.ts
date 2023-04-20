@@ -25,12 +25,12 @@ export class PlanetsService {
     return this.planetsRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getPlanetsById(id: number): Promise<PlanetsEntity> | null {
-    return this.planetsRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.planetsRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addPlanets(planets: Partial<PlanetsEntity>[]): Promise<PlanetsEntity[]> {

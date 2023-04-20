@@ -1,24 +1,26 @@
-import { DataSourceOptions } from "typeorm";
-import migrations from "./migrations"
-import { ConfigService } from "@nestjs/config";
-import { Injectable } from "@nestjs/common";
+import { DataSource, DataSourceOptions } from "typeorm";
+import migrations from "./migrations";
+import * as dotenv from 'dotenv'
+import { PeopleEntity } from "src/entities/people/entity/people.entity";
+import { StarshipsEntity } from "src/entities/starships/entity/starships.entity";
+import { VehiclesEntity } from "src/entities/vehicles/entity/vehicles.entity";
+import { FilmsEntity } from "src/entities/films/entity/films.entity";
+import { PlanetsEntity } from "src/entities/planets/entity/planets.entity";
+import { SpeciesEntity } from "src/entities/species/entity/species.entity";
+import { UsersEntity } from "src/middleware/users/entity/users.entity";
+dotenv.config()
 
-@Injectable()
-export class Config {
 
-  constructor(private readonly configService: ConfigService) {}
-
-  dataSourseOptions: DataSourceOptions = {
+export const dataSourseOptions : DataSourceOptions = {
     type: "mysql",
     host: "localhost",
-    port: this.configService.get<number>('SQL_PORT'),
-    username: this.configService.get<string>('SQL_USERNAME'),
-    password: this.configService.get<string>('SQL_PASSWORD'),
-    database: this.configService.get<string>('SQL_DATABASE'),
-    entities: ['src/**/*.entity.ts'],
+    port: Number(process.env.SQL_PORT),
+    username: process.env.SQL_USERNAME,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DATABASE,
+    entities: [PeopleEntity, StarshipsEntity, VehiclesEntity, FilmsEntity, PlanetsEntity, SpeciesEntity, UsersEntity],
     migrations: migrations
-  }
-   
-  };
+}
 
+export default new DataSource(dataSourseOptions);
 

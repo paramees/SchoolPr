@@ -25,12 +25,12 @@ export class SpeciesService {
     return this.speciesRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getSpeciesById(id: number): Promise<SpeciesEntity> | null {
-    return this.speciesRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.speciesRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addSpecies(species: Partial<SpeciesEntity>[]): Promise<SpeciesEntity[]> {

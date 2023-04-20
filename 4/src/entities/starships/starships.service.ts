@@ -25,12 +25,12 @@ export class StarshipsService {
     return this.starshipsRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getStarshipsById(id: number): Promise<StarshipsEntity> | null {
-    return this.starshipsRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.starshipsRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addStarships(starships: Partial<StarshipsEntity>[]): Promise<StarshipsEntity[]> {

@@ -34,12 +34,12 @@ export class FilmsService {
     return this.filmsRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getFilmsById(id: number): Promise<FilmsEntity> | null {
-    return this.filmsRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.filmsRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addFilms(films: Partial<FilmsEntity>[]): Promise<FilmsEntity[]> {

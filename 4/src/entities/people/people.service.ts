@@ -35,12 +35,12 @@ export class PeopleService {
     return this.peopleRepository.find({
       order: { id: 'DESC' },
       take: 10,
-      relations: this.relations
+      relations: this.relations.map(el => el + "Objs")
     });
   }
 
   getPeopleById(id: number): Promise<PeopleEntity> | null {
-    return this.peopleRepository.findOne({ where: { id: id}, relations: this.relations });
+    return this.peopleRepository.findOne({ where: { id: id}, relations: this.relations.map(el => el + "Objs") });
   }
 
   async addPeople(people: Partial<PeopleEntity>[]): Promise<PeopleEntity[]> {
@@ -57,15 +57,7 @@ export class PeopleService {
   }
 
   async updatePeople(id: number, peopleUpd: Partial<PeopleEntity>): Promise<string | PeopleEntity> {
-    let people = await this.peopleRepository.findOne({ 
-      where: {id: id}, 
-      relations: {
-        filmsObjs: true,
-        speciesObjs: true,
-        vehiclesObjs: true,
-        starshipsObjs: true
-      } 
-    });
+    let people = await this.peopleRepository.findOne({ where: {id: id} });
     if (!people) {
       return "no people with id: " + id;
     }
