@@ -1,13 +1,16 @@
 import { DataSource, DataSourceOptions } from "typeorm";
-import migrations from "./migrations";
 import * as dotenv from 'dotenv'
-import { PeopleEntity } from "src/entities/people/entity/people.entity";
-import { StarshipsEntity } from "src/entities/starships/entity/starships.entity";
-import { VehiclesEntity } from "src/entities/vehicles/entity/vehicles.entity";
-import { FilmsEntity } from "src/entities/films/entity/films.entity";
-import { PlanetsEntity } from "src/entities/planets/entity/planets.entity";
-import { SpeciesEntity } from "src/entities/species/entity/species.entity";
-import { UsersEntity } from "src/middleware/users/entity/users.entity";
+
+import { FilmsEntity } from "../src/entities/films/entity/films.entity";
+import { PeopleEntity } from "../src/entities/people/entity/people.entity";
+import { PlanetsEntity } from "../src/entities/planets/entity/planets.entity";
+import { SpeciesEntity } from "../src/entities/species/entity/species.entity";
+import { StarshipsEntity } from "../src/entities/starships/entity/starships.entity";
+import { VehiclesEntity } from "../src/entities/vehicles/entity/vehicles.entity";
+import { UsersEntity } from "../src/middleware/users/entity/users.entity";
+
+import migrations from "./migrations";
+
 dotenv.config()
 
 

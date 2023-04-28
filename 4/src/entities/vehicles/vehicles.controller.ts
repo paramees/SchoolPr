@@ -1,16 +1,18 @@
-import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, StreamableFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 
-import { VehiclesDto } from './dto/vehicles.dto';
+import { JwtAuthGuard } from '../../middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../middleware/auth/guards/role.guard';
+import { Roles } from '../../middleware/roles.decorator';
+
 import { PostVehiclesDtoValidate } from './dto/post.vehicles-validation.dto';
 import { UpdateVehiclesDtoValidate } from './dto/update.vehicles-validation.dto';
+import { VehiclesDto } from './dto/vehicles.dto';
 
 import { VehiclesService } from './vehicles.service';
-import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
-import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
-import { Roles } from 'src/middleware/roles.decorator';
+
 
 
 @ApiTags("VehiclesApi-CRUD")

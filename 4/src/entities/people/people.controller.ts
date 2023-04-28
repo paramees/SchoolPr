@@ -3,14 +3,15 @@ import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/sw
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 
-import { PeopleDto } from './dto/people.dto';
-import { UpdatePeopleDtoValidate } from './dto/update.people-validation.dto';
-import { PostPeopleDtoValidate } from './dto/post.people-validation.dto';
+import { JwtAuthGuard } from '../../middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../middleware/auth/guards/role.guard';
+import { Roles } from '../../middleware/roles.decorator';
 
+import { PeopleDto } from './dto/people.dto';
+import { PostPeopleDtoValidate } from './dto/post.people-validation.dto';
+import { UpdatePeopleDtoValidate } from './dto/update.people-validation.dto';
 import { PeopleService } from './people.service';
-import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
-import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
-import { Roles } from 'src/middleware/roles.decorator';
+
 
 
 @ApiTags("PeopleApi-CRUD")

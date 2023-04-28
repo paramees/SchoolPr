@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SpeciesEntity } from './entity/Species.entity';
-import { PeopleEntity } from 'src/entities/people/entity/people.entity';
-import { FilmsEntity } from 'src/entities/films/entity/films.entity';
-import { ImagesService } from 'src/middleware/images_aws/images.service';
+import { ImagesService } from '../../middleware/images_aws/images.service';
+import { FilmsEntity } from '../films/entity/films.entity';
+import { PeopleEntity } from '../people/entity/people.entity';
+import { SpeciesEntity } from './entity/species.entity';
+
 
 @Injectable()
 export class SpeciesService {

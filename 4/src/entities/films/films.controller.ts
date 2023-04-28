@@ -9,9 +9,13 @@ import { UpdateFilmsDtoValidate } from './dto/update.films-validation.dto';
 
 import { FilmsService } from './films.service';
 
-import { Roles } from 'src/middleware/roles.decorator';
-import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
-import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
+import { JwtAuthGuard } from '../../middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../middleware/auth/guards/role.guard';
+import { Roles } from '../../middleware/roles.decorator';
+
+
+
+
 
 
 @ApiBearerAuth()
@@ -24,7 +28,7 @@ export class FilmsController {
     @Roles('user', 'admin')
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 200, description: 'Return 10 last films in data base.' })
-    async getLastTenfilms(): Promise<FilmsDto[]> {
+    async getLastTenFilms(): Promise<FilmsDto[]> {
         return await this.filmsService.getLastTenFilms()
     }
 
@@ -41,7 +45,7 @@ export class FilmsController {
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiBody({type: [PostFilmsDtoValidate]})
     @ApiResponse({ status: 201, description: 'Add one film to data base.' })
-    async addfilms(@Body(new ParseArrayPipe({ items: PostFilmsDtoValidate })) film: PostFilmsDtoValidate[]): Promise<FilmsDto[]> {
+    async addFilms(@Body(new ParseArrayPipe({ items: PostFilmsDtoValidate })) film: PostFilmsDtoValidate[]): Promise<FilmsDto[]> {
         return await this.filmsService.addFilms(film)
     }
 
@@ -49,7 +53,7 @@ export class FilmsController {
     @Roles('admin')
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Remove one film by id from data base.' })
-    removefilmsById(@Param('id', ParseIntPipe) id: number): string {
+    removeFilmsById(@Param('id', ParseIntPipe) id: number): string {
         this.filmsService.removeFilmsById(id)
         return "film with id " + id + " was deleted."
     }
@@ -58,7 +62,7 @@ export class FilmsController {
     @Roles('admin')
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Update one film by id in data base.' })
-    async updatefilms(@Body() body: UpdateFilmsDtoValidate): Promise<FilmsDto> {
+    async updateFilms(@Body() body: UpdateFilmsDtoValidate): Promise<FilmsDto> {
         return await this.filmsService.updateFilms(body.id, body)
     }
 
@@ -70,7 +74,7 @@ export class FilmsController {
     @ApiParam({ name: 'id', type: 'integer' })
     @ApiBody({ schema: { type: 'object', properties: { files: { type: 'array', items: { type: 'string', format: 'binary' } } } } })
     @UseInterceptors(FilesInterceptor('files'))
-    addfilmsImage(@Param('id', ParseIntPipe) id: number, @UploadedFiles() files: Express.Multer.File[]) {
+    addFilmsImage(@Param('id', ParseIntPipe) id: number, @UploadedFiles() files: Express.Multer.File[]) {
         return this.filmsService.addFilmsImage(id, files)
     }
 
@@ -79,7 +83,7 @@ export class FilmsController {
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiBody({ schema: { type: 'object', properties: {name: {type: 'string'}}}})
     @ApiResponse({ status: 201, description: 'Remove one film image by film id and image name.' })
-    async removefilmsImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): Promise<string | FilmsDto> {
+    async removeFilmsImage(@Param('id', ParseIntPipe) id: number, @Body() body: {name: string}): Promise<string | FilmsDto> {
         return await this.filmsService.removeFilmsImage(id, body.name)
     }
 
@@ -87,7 +91,7 @@ export class FilmsController {
     @Roles('user', 'admin')
     @UseGuards(JwtAuthGuard, RoleGuard)
     @ApiResponse({ status: 201, description: 'Get film image by image name.' })
-    async getfilmsImage(@Param('imageName') imageName: string, @Res() res: Response) {
+    async getFilmsImage(@Param('imageName') imageName: string, @Res() res: Response) {
         res.attachment(imageName);
         (await this.filmsService.getFilmsImage(imageName)).pipe(res);
     }

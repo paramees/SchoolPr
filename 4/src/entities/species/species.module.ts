@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SpeciesEntity } from './entity/Species.entity';
+import { ImagesService } from '../../middleware/images_aws/images.service';
+import { FilmsEntity } from '../films/entity/films.entity';
+import { PeopleEntity } from '../people/entity/people.entity';
+import { SpeciesEntity } from './entity/species.entity';
 import { SpeciesController } from './species.controller';
 import { SpeciesService } from './species.service';
-import { PeopleEntity } from 'src/entities/people/entity/people.entity';
-import { FilmsEntity } from 'src/entities/films/entity/films.entity';
-import { ImagesService } from 'src/middleware/images_aws/images.service';
+
 
 @Module({
   imports: [TypeOrmModule.forFeature([SpeciesEntity]),

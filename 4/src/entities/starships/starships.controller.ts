@@ -3,14 +3,17 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 
-import { StarshipsDto } from './dto/starships.dto';
+import { JwtAuthGuard } from '../../middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../middleware/auth/guards/role.guard';
+import { Roles } from '../../middleware/roles.decorator';
+
 import { PostStarshipsDtoValidate } from './dto/post.starships-validation.dto';
+import { StarshipsDto } from './dto/starships.dto';
 import { UpdateStarshipsDtoValidate } from './dto/update.starships-validation.dto';
 
 import { StarshipsService } from './starships.service';
-import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
-import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
-import { Roles } from 'src/middleware/roles.decorator';
+
+
 
 
 @ApiTags("StarshipsApi-CRUD")

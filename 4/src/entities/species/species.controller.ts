@@ -2,15 +2,17 @@ import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Res, 
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../middleware/auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../../middleware/auth/guards/role.guard';
+import { Roles } from '../../middleware/roles.decorator';
 
-import { SpeciesDto } from './dto/species.dto';
 import { PostSpeciesDtoValidate } from './dto/post.species-validation.dto';
+import { SpeciesDto } from './dto/species.dto';
 import { UpdateSpeciesDtoValidate } from './dto/update.species-validation.dto';
 
 import { SpeciesService } from './species.service';
-import { JwtAuthGuard } from 'src/middleware/auth/guards/jwt-auth.guard';
-import { RoleGuard } from 'src/middleware/auth/guards/role.guard';
-import { Roles } from 'src/middleware/roles.decorator';
+
+
 
 
 @ApiTags("SpeciesApi-CRUD")
