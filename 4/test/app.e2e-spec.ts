@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
+import * as fs from 'fs';
 import { AppModule } from './../src/app.module';
 import { AllExceptionsFilter } from '../src/middleware/exception.filter';
 import { TransformInterceptor } from '../src/middleware/transform.interceptor';
@@ -11,6 +12,7 @@ describe('AppController (e2e)', () => {
   let userToken: string;
   let adminToken: string;
   let addedId: number;
+  let addedImage: string;
 
 
   const film13dto = {
@@ -188,7 +190,7 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .send([film13dto])
         .expect(201);
-        
+
       addedId = Number(res.body.data[0].id);
       const result = film13entity;
 
@@ -212,6 +214,43 @@ describe('AppController (e2e)', () => {
       .expect(201)
       .expect({ data: "film with id " + addedId + " was deleted." });
   });
+
+  describe('/films/16/addimage (POST) Unauthorized', () => {
+    it('/films/16/addimage (POST) Unauthorized', () => {
+      return request(app.getHttpServer())
+        .post('/films/16/addimage')
+        .expect(401)
+        .expect({ statusCode: 401, message: "Unauthorized" });
+    });
+  });
+
+  describe('/films/16/addimage (POST) admin OK', () => {
+    it('/films/16/addimage (POST) admin OK', async () => {
+      const imageData = fs.readFileSync('test/test.jpg');
+      const res = await request(app.getHttpServer())
+        .post('/films/16/addimage')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .attach('files', imageData, {filename: 'test.jpg', contentType: 'multipart/form-data'})
+        .expect(201);
+        
+        addedImage = res.body.data.image_names[0];
+        console.log(addedImage)
+        expect(res.body.data.image_names[0]).toBeDefined();
+    });
+  });
+
+  describe('/films/16/deleteimage (POST) admin OK', () => {
+    it('/films/16/deleteimage (POST) admin OK', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/films/16/deleteimage')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({name: addedImage})
+        .expect(201);
+        
+        expect(res.body.data.image_names.includes(addedImage)).toBe(false);
+    });
+  });
+
 
   afterAll(async () => {
     await app.close();
