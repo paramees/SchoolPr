@@ -109,7 +109,8 @@ app.get("/book/:id", bodyParser.json(), (req, res) => {
             WHERE books.id = ${req.params.id} 
             GROUP BY books.id;`;
             connectoin.query(query, (err, data) => {
-                console.log(data)
+                let a = req.hostname;
+                console.log(a)
                 if (err || data.length == 0) {
                     console.log("bad querry" + err);
                     res.status(500).send(JSON.stringify({ data: "db err" }));
